@@ -14,11 +14,20 @@
             android:layout_gravity="center"
             android:layout_margin="5dp" />
 
+
+
         <Button
-            android:id="@+id/select_album"
+            android:id="@+id/select_album_multiple"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/choose_image" />
+            android:text="@string/choose_image_multiple" />
+
+
+        <Button
+            android:id="@+id/select_album_single"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/choose_image_single" />
 
         <Button
             android:id="@+id/take_photo"

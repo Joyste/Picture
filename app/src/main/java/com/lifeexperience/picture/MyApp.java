@@ -2,7 +2,12 @@ package com.lifeexperience.picture;
 
 import android.app.Application;
 
-public class MyApp extends Application {
+import androidx.annotation.NonNull;
+import androidx.camera.core.CameraXConfig;
+
+public class MyApp extends Application implements CameraXConfig.Provider{
+
+    private static final String TAG = MyApp.class.getSimpleName();
 
     public static MyApp instance;
 
@@ -14,5 +19,11 @@ public class MyApp extends Application {
     public void onCreate() {
         super.onCreate();
         instance = this;
+    }
+
+    @NonNull
+    @Override
+    public CameraXConfig getCameraXConfig() {
+        return null;
     }
 }

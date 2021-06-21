@@ -17,7 +17,7 @@ import java.io.IOException;
  * 
  */
 public class FileUtils {
-	public static final String FOLDER_NAME = "photocamera";
+	public static final String FOLDER_NAME = "picture";
 
 	/**
 	 * 获取存贮文件的文件夹路径
@@ -45,8 +45,7 @@ public class FileUtils {
 	}
 
 	public static File getEditFile(){
-		return FileUtils.getEmptyFile("tietu"
-				+ System.currentTimeMillis() + ".png");
+		return FileUtils.getEmptyFile(System.currentTimeMillis() + ".png");
 	}
 
 	public static File getEmptyFile(String name) {
