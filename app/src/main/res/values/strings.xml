@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">PhotoCamera</string>
+    <string name="choose_image">choose a image for edit</string>
+    <string name="edit_image">edit image</string>
+    <string name="take_photo">take_photo</string>
+    <string name="no_images">no found the image</string>
+    <string name="images">%d images</string>
+
+    <string name="camera_no_permissions_toast">请前往设置，打开拍照权限，否则功能无法使用</string>
+
+    <string name="notifyTitle">提示</string>
+    <string name="notifyMsg">当前应用缺少必要权限。\n\n请点击\"设置\"-\"权限\"-打开所需权限。</string>
+    <string name="setting">设置</string>
+    <string name="cancel">取消</string>
+</resources>
