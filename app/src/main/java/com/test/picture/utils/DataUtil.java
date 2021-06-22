@@ -1,4 +1,4 @@
-package com.lifeexperience.picture.view.utils;
+package com.test.picture.utils;
 
 import java.lang.ref.WeakReference;
 import java.util.HashMap;

@@ -1,4 +1,4 @@
-package com.lifeexperience.picture;
+package com.test.picture;
 
 import android.content.Context;
 

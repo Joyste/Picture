@@ -1,4 +1,4 @@
-package com.lifeexperience.picture.view;
+package com.test.picture.view;
 
 import android.os.Bundle;
 import android.view.View;
@@ -6,8 +6,8 @@ import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.widget.ImageView;
 
-import com.lifeexperience.picture.R;
-import com.lifeexperience.picture.view.activity.BaseActivity;
+import com.test.picture.R;
+import com.test.picture.view.activity.BaseActivity;
 
 public class SplashActivity extends BaseActivity {
 

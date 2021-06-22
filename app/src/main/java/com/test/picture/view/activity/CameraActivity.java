@@ -1,4 +1,4 @@
-package com.lifeexperience.picture.view.activity;
+package com.test.picture.view.activity;
 
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -12,8 +12,8 @@ import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 
-import com.lifeexperience.picture.R;
-import com.lifeexperience.picture.view.utils.BrightnessUtil;
+import com.test.picture.R;
+import com.test.picture.utils.BrightnessUtil;
 
 public class CameraActivity extends BaseActivity {
 
@@ -86,15 +86,18 @@ public class CameraActivity extends BaseActivity {
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.btnTakePic:
+            case R.id.btnTakePic:{
                 takePicture();
                 break;
-            case R.id.ivExchange:
+            }
+            case R.id.ivExchange: {
                 cameraActivityHelper.exchangeCamera();
                 break;
-            case R.id.btn_delay:
+            }
+            case R.id.btn_delay:{
                 delayTake();
                 break;
+            }
         }
     }
 
@@ -114,20 +117,28 @@ public class CameraActivity extends BaseActivity {
     private void delayTake() {
         DELAY_NUMBER += 1;
         switch (DELAY_NUMBER % 4) {
-            case 0:
+            case 0:{
                 mDelayTime = DELAY_ZERO;
                 break;
-            case 1:
+            }
+
+            case 1:{
                 mDelayTime = DELAY_THREE;
                 break;
-            case 2:
+            }
+
+            case 2:{
                 mDelayTime = DELAY_FIVE;
                 break;
-            case 3:
+            }
+
+            case 3:{
                 mDelayTime = DELAY_TEN;
                 break;
+            }
+
         }
-        btnDelay.setText(mDelayTime + "秒");
+        btnDelay.setText(mDelayTime + R.string.second);
     }
 
     /**

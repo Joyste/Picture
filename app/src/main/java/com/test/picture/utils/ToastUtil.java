@@ -1,9 +1,9 @@
-package com.lifeexperience.picture.view.utils;
+package com.test.picture.utils;
 
 import android.view.Gravity;
 import android.widget.Toast;
 
-import com.lifeexperience.picture.MyApp;
+import com.test.picture.MyApp;
 
 public class ToastUtil {
 

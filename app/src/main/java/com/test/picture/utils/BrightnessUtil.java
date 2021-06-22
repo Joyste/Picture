@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2017 Baidu, Inc. All Rights Reserved.
  */
-package com.lifeexperience.picture.view.utils;
+package com.test.picture.utils;
 
 
 import android.app.Activity;

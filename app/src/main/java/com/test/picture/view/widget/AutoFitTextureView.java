@@ -1,4 +1,4 @@
-package com.lifeexperience.picture.view.widget;
+package com.test.picture.view.widget;
 
 import android.content.Context;
 import android.util.AttributeSet;

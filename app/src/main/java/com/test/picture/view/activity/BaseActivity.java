@@ -1,4 +1,4 @@
-package com.lifeexperience.picture.view.activity;
+package com.test.picture.view.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,7 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
 public abstract class BaseActivity extends AppCompatActivity implements View.OnClickListener {
 
 
-    private  boolean isSetFullScreen = false;
+    private boolean isSetFullScreen = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,16 +42,16 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
     /**
      * 数据初始化
      */
-    protected void initData(){
+    protected void initData() {
 
     }
 
     /**
      * 请求数据
      */
-    protected void getData(){
+    protected void getData() {
 
-    };
+    }
 
     public void finishActivity() {
         finish();
@@ -65,6 +65,7 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
     public void startActivity(Class<?> clz) {
         startActivity(clz, null);
     }
+
     /**
      * [携带数据的页面跳转]
      *
@@ -79,6 +80,7 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
         }
         startActivity(intent);
     }
+
     /**
      * [含有Bundle通过Class打开编辑界面]
      *
@@ -99,7 +101,7 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
      * 设置全屏
      */
     protected void setFullScreen(Boolean isSetFullScreen) {
-        if(isSetFullScreen){
+        if (isSetFullScreen) {
             //设置全屏
             supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
             getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,

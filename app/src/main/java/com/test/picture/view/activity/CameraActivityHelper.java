@@ -1,4 +1,4 @@
-package com.lifeexperience.picture.view.activity;
+package com.test.picture.view.activity;
 
 import android.Manifest;
 import android.content.Context;
@@ -31,9 +31,9 @@ import android.widget.RelativeLayout;
 
 import androidx.core.app.ActivityCompat;
 
-import com.lifeexperience.picture.view.utils.BitmapUtils;
-import com.lifeexperience.picture.view.utils.DataUtil;
-import com.lifeexperience.picture.view.utils.PhoneUtil;
+import com.test.picture.utils.BitmapUtils;
+import com.test.picture.utils.DataUtil;
+import com.test.picture.utils.PhoneUtil;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;

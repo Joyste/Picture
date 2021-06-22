@@ -32,3 +32,6 @@
 
 #Okio
 -dontwarn org.codehaus.mojo.animal_sniffer.*
+
+
+-keep class com.huantansheng.easyphotos.models.** { *; }

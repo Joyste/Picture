@@ -1,9 +1,9 @@
-package com.lifeexperience.picture.view.tool;
+package com.test.picture.tool;
 
 import android.app.Activity;
 import android.content.pm.ActivityInfo;
 
-import com.lifeexperience.picture.R;
+import com.test.picture.R;
 import com.luck.picture.lib.config.PictureConfig;
 import com.luck.picture.lib.entity.LocalMedia;
 import com.luck.picture.lib.listener.OnResultCallbackListener;
