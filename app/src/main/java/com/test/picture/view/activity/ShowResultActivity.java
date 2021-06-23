@@ -1,12 +1,15 @@
 package com.test.picture.view.activity;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 
+import com.huantansheng.easyphotos.EasyPhotos;
 import com.test.picture.R;
 import com.test.picture.utils.DataUtil;
 import com.test.picture.utils.FileUtils;
@@ -40,7 +43,16 @@ public class ShowResultActivity extends BaseActivity {
         btnBack = findViewById(R.id.btn_back);
         btnSave = findViewById(R.id.btn_save);
 
-        photo = (Bitmap) DataUtil.getInstance().getData("photo");
+        Intent intent = getIntent();
+        String path = intent.getStringExtra("path");
+
+        if (path != null) {
+            photo = BitmapFactory.decodeFile(path);
+            btnSave.setVisibility(View.INVISIBLE);
+        } else {
+            photo = (Bitmap) DataUtil.getInstance().getData("photo");
+        }
+
         ivShowPhoto.setImageBitmap(photo);
 
 
@@ -67,6 +79,7 @@ public class ShowResultActivity extends BaseActivity {
                 String path = savePicture(photo);
                 Log.d(TAG, path);
                 ToastUtil.showShortToast(R.string.toast_save + path);
+                EasyPhotos.notifyMedia(this,path);
                 finish();
                 break;
             }
