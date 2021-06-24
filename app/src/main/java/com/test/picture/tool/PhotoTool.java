@@ -68,7 +68,7 @@ public class PhotoTool {
      * @param REQUEST_CODE
      */
     public void openAlbumForMultiple(Activity activity, int count, ArrayList<Photo> photos, int REQUEST_CODE) {
-        openAlbum(activity, false, true, GlideEngine.getInstance(), false, count, photos, REQUEST_CODE);
+        openAlbum(activity, false, false, GlideEngine.getInstance(), false, count, photos, REQUEST_CODE);
     }
 
 

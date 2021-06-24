@@ -3,13 +3,11 @@ package com.test.picture.view;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -18,16 +16,16 @@ import androidx.core.content.ContextCompat;
 
 import com.huantansheng.easyphotos.EasyPhotos;
 import com.huantansheng.easyphotos.models.album.entity.Photo;
+import com.test.imageeditlibrary.editimage.EditImageActivity;
 import com.test.picture.R;
-import com.test.picture.tool.GlideEngine;
 import com.test.picture.tool.PhotoTool;
 import com.test.picture.utils.FileUtils;
 import com.test.picture.utils.ToastUtil;
 import com.test.picture.view.activity.BaseActivity;
 import com.test.picture.view.activity.CameraActivity;
 import com.test.picture.view.activity.ShowResultActivity;
-import com.test.picture.utils.DataUtil;
 
+import java.io.File;
 import java.util.ArrayList;
 
 
@@ -45,14 +43,21 @@ public class MainActivity extends BaseActivity {
 
     private static final int REQUEST_MULTIPLE_CODE = 6;
 
+    private static final int REQUEST_CUSTOM_PUZZLE_CODE = 7;
+
+    private static final int REQUEST_EDITIMAGE_CODE = 8;
+
+    public static final int ACTION_REQUEST_EDITIMAGE = 9;
+
     private MainActivity context;
-    private ImageView imgView;
     private Button openAblumForMultiple;//打开图库多选
     private Button openAblumForSingle;//打开图库单选
     private Button editImage;//编辑照片
     private Button mTakenPhoto;//拍摄照片用于编辑
+    private Button customPuzzle;//自定义拼图
     private int imageWidth, imageHeight;//
     private ArrayList<Photo> selectedPhotoList = new ArrayList<>();
+
 
 
     @Override
@@ -72,11 +77,11 @@ public class MainActivity extends BaseActivity {
         imageWidth = metrics.widthPixels;
         imageHeight = metrics.heightPixels;
 
-        imgView = (ImageView) findViewById(R.id.img);
         openAblumForMultiple = findViewById(R.id.select_album_multiple);
         openAblumForSingle = findViewById(R.id.select_album_single);
         editImage = findViewById(R.id.edit_image);
         mTakenPhoto = findViewById(R.id.take_photo);
+        customPuzzle = findViewById(R.id.custom_puzzle);
 
     }
 
@@ -86,6 +91,7 @@ public class MainActivity extends BaseActivity {
         openAblumForSingle.setOnClickListener(this);
         editImage.setOnClickListener(this);
         mTakenPhoto.setOnClickListener(this);
+        customPuzzle.setOnClickListener(this);
     }
 
     @Override
@@ -109,6 +115,10 @@ public class MainActivity extends BaseActivity {
                 selectFromAlbumSingle();
                 break;
             }
+            case R.id.custom_puzzle:{
+                startCustomPuzzle();
+                break;
+            }
         }//end switch
     }
 
@@ -116,7 +126,7 @@ public class MainActivity extends BaseActivity {
      * 修改图片
      */
     private void editImageClick() {
-
+        PhotoTool.getInstance().openAlbumForSingle(this, ACTION_REQUEST_EDITIMAGE);
     }
 
 
@@ -141,6 +151,13 @@ public class MainActivity extends BaseActivity {
         PhotoTool.getInstance().openAlbumForSingle(this, REQUEST_SINGLE_CODE);
     }
 
+    /**
+     * 自定义拼图
+     */
+    private void startCustomPuzzle(){
+        PhotoTool.getInstance().openAlbumForMultiple(this, 9, selectedPhotoList, REQUEST_CUSTOM_PUZZLE_CODE);
+    }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -162,7 +179,7 @@ public class MainActivity extends BaseActivity {
 
                     if (resultPhotos.size() == 1) {
                         //如果图片数量为1，则提示用户并重新选择。
-                        ToastUtil.showShortToast(String.valueOf(R.string.puzzle_toast));
+                        ToastUtil.showShortToast(this.getString(R.string.puzzle_toast));
                         selectFromAlbumMultiple();
                     } else {
                         //大于1，则进入拼图界面
@@ -180,8 +197,53 @@ public class MainActivity extends BaseActivity {
                     showResult(puzzlePhoto.path);
                     break;
                 }
+                case REQUEST_CUSTOM_PUZZLE_CODE:{
+                    //获取多选的数据
+                    ArrayList<Photo> resultPhotos = data.getParcelableArrayListExtra(EasyPhotos.RESULT_PHOTOS);
+//                    selectedPhotoList.clear();
+//                    selectedPhotoList.addAll(resultPhotos);
+
+//                    if (resultPhotos.size() == 1) {
+//                        //如果图片数量为1，则提示用户并重新选择。
+//                        ToastUtil.showShortToast(this.getString(R.string.puzzle_toast));
+//                        selectFromAlbumMultiple();
+//                    } else {
+//                        //大于1，则进入拼图界面
+//                        PhotoTool.getInstance().startPuzzleWithPhotos(MainActivity.this, resultPhotos, REQUEST_PUZZLE_CODE);
+//                    }
+
+
+                }
+                case ACTION_REQUEST_EDITIMAGE:{
+                    ArrayList<Photo> resultPhotos = data.getParcelableArrayListExtra(EasyPhotos.RESULT_PHOTOS);
+                    File outputFile = FileUtils.getEditFile();
+                    EditImageActivity.start(this,resultPhotos.get(0).path,outputFile.getAbsolutePath(),REQUEST_EDITIMAGE_CODE);
+                }
+                case REQUEST_EDITIMAGE_CODE:{
+                    handleEditorImage(data);
+                    break;
+                }
+
             }
         }
+    }
+
+    private void handleEditorImage(Intent data) {
+        String newFilePath = data.getStringExtra(EditImageActivity.EXTRA_OUTPUT);
+        boolean isImageEdit = data.getBooleanExtra(EditImageActivity.IMAGE_IS_EDIT, false);
+
+        if (isImageEdit){
+            showResult(newFilePath);
+        }else{//未编辑  还是用原来的图片
+            newFilePath = data.getStringExtra(EditImageActivity.FILE_PATH);;
+        }
+
+//        //System.out.println("newFilePath---->" + newFilePath);
+//        //File file = new File(newFilePath);
+//        //System.out.println("newFilePath size ---->" + (file.length() / 1024)+"KB");
+//        Log.d("image is edit", isImageEdit + "");
+//        EditImageActivity.LoadImageTask loadTask = new EditImageActivity.LoadImageTask();
+//        loadTask.execute(newFilePath);
     }
 
     /**

@@ -43,6 +43,8 @@ dependencies {
 
 //    implementation 'com.joker.HuanTanSheng:EasyPhotos:andX-2.5.6'
 
+    api project(':imageeditlibrary')
+
 
 
 }
