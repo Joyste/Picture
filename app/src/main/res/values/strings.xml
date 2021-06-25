@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">PhotoCamera</string>
-    <string name="choose_image_multiple" translatable="false">从图库选择照片（多选）</string>
+    <string name="choose_image_puzzle" translatable="false">拼图</string>
     <string name="choose_image_single" translatable="false">从图库选择照片（单选）</string>
     <string name="edit_image" translatable="false">修改照片</string>
     <string name="custom_puzzle" translatable="false">自定义拼图</string>

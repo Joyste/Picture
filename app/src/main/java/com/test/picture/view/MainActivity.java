@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -35,17 +34,17 @@ public class MainActivity extends BaseActivity {
     /**
      * 相机权限请求标识
      */
-    private static final int REQUEST_CAMERA_CODE = 0x100;
+    public static final int REQUEST_CAMERA_CODE = 0x100;
 
-    private static final int REQUEST_PUZZLE_CODE = 4;
+    public static final int REQUEST_PUZZLE_CODE = 4;
 
-    private static final int REQUEST_SINGLE_CODE = 5;
+    public static final int REQUEST_SINGLE_CODE = 5;
 
-    private static final int REQUEST_MULTIPLE_CODE = 6;
+    public static final int REQUEST_MULTIPLE_CODE_FOR_PUZZLE = 6;
 
-    private static final int REQUEST_CUSTOM_PUZZLE_CODE = 7;
+    public static final int REQUEST_CUSTOM_PUZZLE_CODE = 7;
 
-    private static final int REQUEST_EDITIMAGE_CODE = 8;
+    public static final int REQUEST_EDITIMAGE_CODE = 8;
 
     public static final int ACTION_REQUEST_EDITIMAGE = 9;
 
@@ -77,7 +76,7 @@ public class MainActivity extends BaseActivity {
         imageWidth = metrics.widthPixels;
         imageHeight = metrics.heightPixels;
 
-        openAblumForMultiple = findViewById(R.id.select_album_multiple);
+        openAblumForMultiple = findViewById(R.id.select_album_multiple_for_puzzle);
         openAblumForSingle = findViewById(R.id.select_album_single);
         editImage = findViewById(R.id.edit_image);
         mTakenPhoto = findViewById(R.id.take_photo);
@@ -107,8 +106,8 @@ public class MainActivity extends BaseActivity {
                 break;
             }
 
-            case R.id.select_album_multiple: {
-                selectFromAlbumMultiple();
+            case R.id.select_album_multiple_for_puzzle: {
+                selectFromAlbumMultipleForPuzzle();
                 break;
             }
             case R.id.select_album_single: {
@@ -140,8 +139,8 @@ public class MainActivity extends BaseActivity {
     /**
      * 从图库中选择图片 多选
      */
-    private void selectFromAlbumMultiple() {
-        PhotoTool.getInstance().openAlbumForMultiple(this, 9, selectedPhotoList, REQUEST_MULTIPLE_CODE);
+    private void selectFromAlbumMultipleForPuzzle() {
+        PhotoTool.getInstance().openAlbumForMultiple(this, 9, selectedPhotoList, REQUEST_MULTIPLE_CODE_FOR_PUZZLE);
     }
 
     /**
@@ -171,7 +170,7 @@ public class MainActivity extends BaseActivity {
                     showResult(resultPhotos.get(0).path);
                     break;
                 }
-                case REQUEST_MULTIPLE_CODE: {
+                case REQUEST_MULTIPLE_CODE_FOR_PUZZLE: {
                     //获取多选的数据
                     ArrayList<Photo> resultPhotos = data.getParcelableArrayListExtra(EasyPhotos.RESULT_PHOTOS);
                     selectedPhotoList.clear();
@@ -180,7 +179,7 @@ public class MainActivity extends BaseActivity {
                     if (resultPhotos.size() == 1) {
                         //如果图片数量为1，则提示用户并重新选择。
                         ToastUtil.showShortToast(this.getString(R.string.puzzle_toast));
-                        selectFromAlbumMultiple();
+                        selectFromAlbumMultipleForPuzzle();
                     } else {
                         //大于1，则进入拼图界面
                         PhotoTool.getInstance().startPuzzleWithPhotos(MainActivity.this, resultPhotos, REQUEST_PUZZLE_CODE);
@@ -211,13 +210,13 @@ public class MainActivity extends BaseActivity {
 //                        //大于1，则进入拼图界面
 //                        PhotoTool.getInstance().startPuzzleWithPhotos(MainActivity.this, resultPhotos, REQUEST_PUZZLE_CODE);
 //                    }
-
-
+                    break;
                 }
                 case ACTION_REQUEST_EDITIMAGE:{
                     ArrayList<Photo> resultPhotos = data.getParcelableArrayListExtra(EasyPhotos.RESULT_PHOTOS);
                     File outputFile = FileUtils.getEditFile();
                     EditImageActivity.start(this,resultPhotos.get(0).path,outputFile.getAbsolutePath(),REQUEST_EDITIMAGE_CODE);
+                    break;
                 }
                 case REQUEST_EDITIMAGE_CODE:{
                     handleEditorImage(data);

@@ -25,8 +25,8 @@ public class MainMenuFragment extends BaseEditFragment implements View.OnClickLi
     private View rotateBtn;// 旋转按钮
     private View mTextBtn;//文字型贴图添加
     private View mPaintBtn;//编辑按钮
-//    private View mBeautyBtn;//美颜按钮
-//    private View fliterBtn;// 滤镜按钮
+    private View mBeautyBtn;//美颜按钮
+    private View fliterBtn;// 滤镜按钮
 
     public static MainMenuFragment newInstance() {
         MainMenuFragment fragment = new MainMenuFragment();
@@ -55,16 +55,16 @@ public class MainMenuFragment extends BaseEditFragment implements View.OnClickLi
         rotateBtn = mainView.findViewById(R.id.btn_rotate);
         mTextBtn = mainView.findViewById(R.id.btn_text);
         mPaintBtn = mainView.findViewById(R.id.btn_paint);
-//        mBeautyBtn = mainView.findViewById(R.id.btn_beauty);
-//        fliterBtn = mainView.findViewById(R.id.btn_filter);
+        mBeautyBtn = mainView.findViewById(R.id.btn_beauty);
+        fliterBtn = mainView.findViewById(R.id.btn_filter);
 
         stickerBtn.setOnClickListener(this);
         cropBtn.setOnClickListener(this);
         rotateBtn.setOnClickListener(this);
         mTextBtn.setOnClickListener(this);
         mPaintBtn.setOnClickListener(this);
-//        mBeautyBtn.setOnClickListener(this);
-//        fliterBtn.setOnClickListener(this);
+        mBeautyBtn.setOnClickListener(this);
+        fliterBtn.setOnClickListener(this);
     }
 
     @Override
@@ -81,11 +81,7 @@ public class MainMenuFragment extends BaseEditFragment implements View.OnClickLi
     public void onClick(View v) {
         if (v == stickerBtn) {
             onStickClick();
-        }
-//        else if (v == fliterBtn) {
-//            onFilterClick();
-//       }
-        else if (v == cropBtn) {
+        } else if (v == cropBtn) {
             onCropClick();
         } else if (v == rotateBtn) {
             onRotateClick();
@@ -94,9 +90,11 @@ public class MainMenuFragment extends BaseEditFragment implements View.OnClickLi
         } else if (v == mPaintBtn) {
             onPaintClick();
         }
-//        else if(v == mBeautyBtn){
-//            onBeautyClick();
-//        }
+        else if(v == mBeautyBtn){
+            onBeautyClick();
+        }else if (v == fliterBtn) {
+            onFilterClick();
+        }
     }
 
     /**
@@ -109,15 +107,15 @@ public class MainMenuFragment extends BaseEditFragment implements View.OnClickLi
         activity.mStickerFragment.onShow();
     }
 
-//    /**
-//     * 滤镜模式
-//     *
-//     * @author panyi
-//     */
-//    private void onFilterClick() {
-//        activity.bottomGallery.setCurrentItem(FilterListFragment.INDEX);
-//        activity.mFilterListFragment.onShow();
-//    }
+    /**
+     * 滤镜模式
+     *
+     * @author panyi
+     */
+    private void onFilterClick() {
+        activity.bottomGallery.setCurrentItem(FilterListFragment.INDEX);
+        activity.mFilterListFragment.onShow();
+    }
 
     /**
      * 裁剪模式

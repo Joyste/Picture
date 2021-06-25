@@ -7,8 +7,13 @@ import android.net.NetworkInfo;
 import android.os.Environment;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.DecimalFormat;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 文件相关辅助类
@@ -153,4 +158,7 @@ public class FileUtils {
         }
         return false;
     }
+
+
+
 }// end
