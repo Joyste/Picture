@@ -179,7 +179,7 @@ public class MainActivity extends BaseActivity {
                     if (resultPhotos.size() == 1) {
                         //如果图片数量为1，则提示用户并重新选择。
                         ToastUtil.showShortToast(this.getString(R.string.puzzle_toast));
-                        selectFromAlbumMultipleForPuzzle();
+                        showResult(resultPhotos.get(0).path);
                     } else {
                         //大于1，则进入拼图界面
                         PhotoTool.getInstance().startPuzzleWithPhotos(MainActivity.this, resultPhotos, REQUEST_PUZZLE_CODE);
