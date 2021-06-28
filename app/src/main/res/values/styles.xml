@@ -5,7 +5,7 @@
         <item name="colorPrimary">@color/pink</item>
         <item name="colorPrimaryDark">@color/pink</item>
         <item name="colorOnPrimary">@color/white</item>
-        <item name="colorAccent">@color/black</item>
+        <item name="colorAccent">@color/app_color_green</item>
 
         <item name="android:windowAnimationStyle">@style/activityAnim</item>
         <!-- 没有Title -->

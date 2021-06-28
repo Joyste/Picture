@@ -59,7 +59,7 @@
         </ViewFlipper>
     </FrameLayout>
 
-    <com.test.imageeditlibrary.editimage.view.CustomViewPager
+    <com.xinlan.imageeditlibrary.editimage.view.CustomViewPager
         android:id="@+id/bottom_gallery"
         android:layout_width="fill_parent"
         android:layout_height="@dimen/bottom_banner_height"
@@ -75,41 +75,41 @@
         android:layout_below="@id/banner"
         android:background="#000000">
 
-        <com.test.imageeditlibrary.editimage.view.imagezoom.ImageViewTouch
+        <com.xinlan.imageeditlibrary.editimage.view.imagezoom.ImageViewTouch
             android:id="@+id/main_image"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:layout_gravity="center" />
 
-        <com.test.imageeditlibrary.editimage.view.StickerView
+        <com.xinlan.imageeditlibrary.editimage.view.StickerView
             android:id="@+id/sticker_panel"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:layout_gravity="center"
             android:visibility="gone" />
 
-        <com.test.imageeditlibrary.editimage.view.CropImageView
+        <com.xinlan.imageeditlibrary.editimage.view.CropImageView
             android:id="@+id/crop_panel"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:layout_gravity="center"
             android:visibility="gone" />
 
-        <com.test.imageeditlibrary.editimage.view.RotateImageView
+        <com.xinlan.imageeditlibrary.editimage.view.RotateImageView
             android:id="@+id/rotate_panel"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:layout_gravity="center"
             android:visibility="gone" />
 
-        <com.test.imageeditlibrary.editimage.view.TextStickerView
+        <com.xinlan.imageeditlibrary.editimage.view.TextStickerView
             android:id="@+id/text_sticker_panel"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:layout_gravity="center"
             android:visibility="gone" />
 
-        <com.test.imageeditlibrary.editimage.view.CustomPaintView
+        <com.xinlan.imageeditlibrary.editimage.view.CustomPaintView
             android:id="@+id/custom_paint_view"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"

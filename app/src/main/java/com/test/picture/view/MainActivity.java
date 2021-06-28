@@ -15,7 +15,7 @@ import androidx.core.content.ContextCompat;
 
 import com.huantansheng.easyphotos.EasyPhotos;
 import com.huantansheng.easyphotos.models.album.entity.Photo;
-import com.test.imageeditlibrary.editimage.EditImageActivity;
+import com.xinlan.imageeditlibrary.editimage.EditImageActivity;
 import com.test.picture.R;
 import com.test.picture.tool.PhotoTool;
 import com.test.picture.utils.FileUtils;
