@@ -29,6 +29,7 @@ import com.xinlan.imageeditlibrary.editimage.fragment.MainMenuFragment;
 import com.xinlan.imageeditlibrary.editimage.fragment.PaintFragment;
 import com.xinlan.imageeditlibrary.editimage.fragment.RotateFragment;
 import com.xinlan.imageeditlibrary.editimage.fragment.StickerFragment;
+import com.xinlan.imageeditlibrary.editimage.fragment.ToneFragment;
 import com.xinlan.imageeditlibrary.editimage.utils.FileUtil;
 import com.xinlan.imageeditlibrary.editimage.view.CropImageView;
 import com.xinlan.imageeditlibrary.editimage.view.CustomPaintView;
@@ -65,6 +66,8 @@ public class EditImageActivity extends BaseActivity {
     public static final int MODE_TEXT = 5;// 文字模式
     public static final int MODE_PAINT = 6;//绘制模式
     public static final int MODE_BEAUTY = 7;//美颜模式
+    public static final int MODE_TONE = 8;//色值模式
+
 
     public String filePath;// 需要编辑图片路径
     public String saveFilePath;// 生成的新图片路径
@@ -101,6 +104,8 @@ public class EditImageActivity extends BaseActivity {
     public AddTextFragment mAddTextFragment;//图片添加文字
     public PaintFragment mPaintFragment;//绘制模式Fragment
     public BeautyFragment mBeautyFragment;//美颜模式Fragment
+    public ToneFragment mToneFragment;//色值模式Fragment
+
     private SaveImageTask mSaveImageTask;
 
     private RedoUndoController mRedoUndoController;//撤销操作
@@ -180,6 +185,7 @@ public class EditImageActivity extends BaseActivity {
         mAddTextFragment = AddTextFragment.newInstance();
         mPaintFragment = PaintFragment.newInstance();
         mBeautyFragment = BeautyFragment.newInstance();
+        mToneFragment = ToneFragment.newInstance();
 
         bottomGallery.setAdapter(mBottomGalleryAdapter);
 
@@ -234,13 +240,15 @@ public class EditImageActivity extends BaseActivity {
                     return mPaintFragment;//绘制
                 case BeautyFragment.INDEX://美颜
                     return mBeautyFragment;
+                case ToneFragment.INDEX://色值
+                    return mToneFragment;
             }//end switch
             return MainMenuFragment.newInstance();
         }
 
         @Override
         public int getCount() {
-            return 8;
+            return 9;
         }
     }// end inner class
 
@@ -297,6 +305,9 @@ public class EditImageActivity extends BaseActivity {
             case MODE_BEAUTY://从美颜模式中返回
                 mBeautyFragment.backToMain();
                 return;
+            case MODE_TONE://从色值模式中返回
+                mToneFragment.backToMain();
+                return;
         }// end switch
 
         if (canAutoExit()) {
@@ -348,6 +359,9 @@ public class EditImageActivity extends BaseActivity {
                     break;
                 case MODE_BEAUTY://保存美颜后的图片
                     mBeautyFragment.applyBeauty();
+                    break;
+                case MODE_TONE://保存美颜后的图片
+                    mToneFragment.applyToneImage();
                     break;
                 default:
                     break;

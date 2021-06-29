@@ -13,4 +13,6 @@ public final class ModuleConfig {
     public static final int INDEX_ADDTEXT = 5;
     public static final int INDEX_PAINT = 6;
     public static final int INDEX_BEAUTY = 7;//美颜
+    public static final int INDEX_TONE = 8;//色值
+
 }
