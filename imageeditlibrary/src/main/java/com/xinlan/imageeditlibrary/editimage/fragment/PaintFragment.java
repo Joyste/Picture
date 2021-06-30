@@ -106,8 +106,8 @@ public class PaintFragment extends BaseEditFragment implements View.OnClickListe
 
         LinearLayoutManager stickerListLayoutManager = new LinearLayoutManager(activity);
         stickerListLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
-
         mColorListView.setLayoutManager(stickerListLayoutManager);
+
         mColorAdapter = new ColorListAdapter(this, mPaintColors, this);
         mColorListView.setAdapter(mColorAdapter);
 

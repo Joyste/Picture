@@ -12,7 +12,7 @@
     <string name="text">text</string>
     <string name="edit">edit</string>
     <string name="tone">tone</string>
-
+    <string name="reset">reset</string>
 
     <string name="materialcolorpicker__app_name">Android Material Color Picker Dialog</string>
     <string name="materialcolorpicker__descLib">Material Color Picker Dialog</string>
