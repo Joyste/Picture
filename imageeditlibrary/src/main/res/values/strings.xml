@@ -13,6 +13,10 @@
     <string name="edit">edit</string>
     <string name="tone">tone</string>
     <string name="reset">reset</string>
+    <string name="luminance">luminance</string>
+    <string name="contrast">contrast</string>
+    <string name="saturation">saturation</string>
+    <string name="hue">hue</string>
 
     <string name="materialcolorpicker__app_name">Android Material Color Picker Dialog</string>
     <string name="materialcolorpicker__descLib">Material Color Picker Dialog</string>

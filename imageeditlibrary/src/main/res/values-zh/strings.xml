@@ -10,7 +10,7 @@
     <string name="rotate">旋转</string>
     <string name="text">文字</string>
     <string name="edit">涂鸦</string>
-    <string name="tone">色调</string>
+    <string name="tone">调节</string>
     <string name="materialcolorpicker__app_name">颜色选择</string>
     <string name="materialcolorpicker__descLib">颜色选择</string>
     <string name="materialcolorpicker__errHex">颜色值不正确</string>
@@ -23,6 +23,10 @@
     <string name="save_error">图片保存失败</string>
     <string name="handing">处理中...</string>
     <string name="reset">重置</string>
+    <string name="luminance">亮度</string>
+    <string name="contrast">对比度</string>
+    <string name="saturation">饱和度</string>
+    <string name="hue">色相</string>
     <string-array name="filters">
         <item>原始</item>
         <item>软化</item>

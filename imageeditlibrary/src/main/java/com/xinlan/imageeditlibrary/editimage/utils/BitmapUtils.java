@@ -29,9 +29,12 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.ColorMatrix;
+import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Matrix;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory.Options;
+import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.media.ExifInterface;
 import android.os.Environment;
@@ -502,5 +505,91 @@ public class BitmapUtils {
             bitmap.recycle();
         }
         return returnBm;
+    }
+
+    /**
+     * 调整图片的色相
+     *
+     * @param srcBitmap
+     * @param rotate
+     * @return
+     */
+    public static Bitmap changeImageRotate(Bitmap srcBitmap, int rotate) {
+
+        //调整色相
+        ColorMatrix rotateMatrix = new ColorMatrix();
+        rotateMatrix.setRotate(0, rotate);
+        rotateMatrix.setRotate(1, rotate);
+        rotateMatrix.setRotate(2, rotate);
+
+        ColorMatrix colorMatrix = new ColorMatrix();
+        colorMatrix.postConcat(rotateMatrix);
+
+        //创建一个大小相同的空白Bitmap
+        Bitmap dstBitmap = Bitmap.createBitmap(srcBitmap.getWidth(), srcBitmap.getHeight(), Bitmap.Config.ARGB_8888);
+        //载入Canvas,Paint
+        Canvas canvas = new Canvas(dstBitmap);
+        Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        paint.setColorFilter(new ColorMatrixColorFilter(colorMatrix));
+        //绘图
+        canvas.drawBitmap(srcBitmap, 0, 0, paint);
+
+        return dstBitmap;
+    }
+
+    /**
+     * 调整图片的饱和度
+     *
+     * @param srcBitmap
+     * @param saturation
+     * @return
+     */
+    public static Bitmap changeImageSaturation(Bitmap srcBitmap, int saturation) {
+
+        //调整色彩饱和度
+        ColorMatrix saturationMatrix = new ColorMatrix();
+        saturationMatrix.setSaturation(saturation);
+
+        ColorMatrix colorMatrix = new ColorMatrix();
+        colorMatrix.postConcat(saturationMatrix);
+
+        //创建一个大小相同的空白Bitmap
+        Bitmap dstBitmap = Bitmap.createBitmap(srcBitmap.getWidth(), srcBitmap.getHeight(), Bitmap.Config.ARGB_8888);
+        //载入Canvas,Paint
+        Canvas canvas = new Canvas(dstBitmap);
+        Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        paint.setColorFilter(new ColorMatrixColorFilter(colorMatrix));
+        //绘图
+        canvas.drawBitmap(srcBitmap, 0, 0, paint);
+
+        return dstBitmap;
+    }
+
+    /**
+     * 调整图片的灰度
+     *
+     * @param srcBitmap
+     * @param scale
+     * @return
+     */
+    public static Bitmap changeImageScale(Bitmap srcBitmap, int scale) {
+
+        //调整灰度
+        ColorMatrix scaleMatrix = new ColorMatrix();
+        scaleMatrix.setScale(scale, scale, scale, 1);
+
+        ColorMatrix colorMatrix = new ColorMatrix();
+        colorMatrix.postConcat(scaleMatrix);
+
+        //创建一个大小相同的空白Bitmap
+        Bitmap dstBitmap = Bitmap.createBitmap(srcBitmap.getWidth(), srcBitmap.getHeight(), Bitmap.Config.ARGB_8888);
+        //载入Canvas,Paint
+        Canvas canvas = new Canvas(dstBitmap);
+        Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        paint.setColorFilter(new ColorMatrixColorFilter(colorMatrix));
+        //绘图
+        canvas.drawBitmap(srcBitmap, 0, 0, paint);
+
+        return dstBitmap;
     }
 }//
