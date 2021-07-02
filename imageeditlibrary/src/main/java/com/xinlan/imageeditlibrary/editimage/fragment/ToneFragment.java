@@ -88,12 +88,12 @@ public class ToneFragment extends BaseEditFragment implements View.OnClickListen
     /**
      * 初始化Item数据
      */
-    private void initData(){
-        dataList.add(new ToneItem(R.drawable.crop_normal,R.string.luminance,MID_VALUE ));//亮度
-        dataList.add(new ToneItem(R.drawable.crop_normal,R.string.contrast,MID_VALUE ));//对比度
-        dataList.add(new ToneItem(R.drawable.crop_normal,R.string.saturation,MID_VALUE ));//饱和度
-        dataList.add(new ToneItem(R.drawable.crop_normal,R.string.hue,MID_VALUE ));//色相
-        dataList.add(new ToneItem(R.drawable.crop_normal,R.string.exposure,MID_VALUE ));//曝光
+    private void initData() {
+        dataList.add(new ToneItem(R.drawable.crop_normal, R.string.luminance, MID_VALUE));//亮度
+        dataList.add(new ToneItem(R.drawable.crop_normal, R.string.contrast, MID_VALUE));//对比度
+        dataList.add(new ToneItem(R.drawable.crop_normal, R.string.saturation, MID_VALUE));//饱和度
+        dataList.add(new ToneItem(R.drawable.crop_normal, R.string.hue, MID_VALUE));//色相
+        dataList.add(new ToneItem(R.drawable.crop_normal, R.string.exposure, MID_VALUE));//曝光
         mPhotoEnhance = new PhotoEnhance();
         mPhotoEnhance.setBitmap(editBitmap);
         mProgress = MID_VALUE;
@@ -118,7 +118,7 @@ public class ToneFragment extends BaseEditFragment implements View.OnClickListen
 
 
     /**
-     *初始化recycleView
+     * 初始化recycleView
      */
     private void initToneListView() {
 
@@ -128,7 +128,7 @@ public class ToneFragment extends BaseEditFragment implements View.OnClickListen
         stickerListLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
         mToneListView.setLayoutManager(stickerListLayoutManager);
 
-        mToneListAdapter = new ToneListAdapter(getContext(),dataList);
+        mToneListAdapter = new ToneListAdapter(getContext(), dataList);
         mToneListAdapter.setOnItemClickListener(new ToneListAdapter.OnItemClickListener() {
             @SuppressLint("ResourceAsColor")
             @Override
@@ -159,7 +159,7 @@ public class ToneFragment extends BaseEditFragment implements View.OnClickListen
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 mProgress = progress;
-                seekbarValue.setText(String.valueOf(progress-MID_VALUE));
+                seekbarValue.setText(String.valueOf(progress - MID_VALUE));
             }
 
             @Override
@@ -171,35 +171,35 @@ public class ToneFragment extends BaseEditFragment implements View.OnClickListen
             public void onStopTrackingTouch(SeekBar seekBar) {
                 dataList.get(POSITION).setValue(mProgress);
                 tvToneValue = itemView.findViewById(R.id.tv_tone_value);
-                tvToneValue.setText(String.valueOf(mProgress-MID_VALUE));
+                tvToneValue.setText(String.valueOf(mProgress - MID_VALUE));
 
                 int type = 0;
-                switch (POSITION){
-                    case 0:{
+                switch (POSITION) {
+                    case 0: {
                         //亮度调节
                         mPhotoEnhance.setBrightness(mProgress);
                         type = PhotoEnhance.ENHANCE_BRIGHTNESS;
                         break;
                     }
-                    case 1:{
+                    case 1: {
                         //对比度调节
                         mPhotoEnhance.setContrast(mProgress);
                         type = PhotoEnhance.ENHANCE_CONTRAST;
                         break;
                     }
-                    case 2:{
+                    case 2: {
                         //饱和度调节
                         mPhotoEnhance.setSaturation(mProgress);
                         type = PhotoEnhance.ENHANCE_SATURATION;
                         break;
                     }
-                    case 3:{
+                    case 3: {
                         //色相调节
                         mPhotoEnhance.setHue(mProgress);
                         type = PhotoEnhance.ENHANCE_HUE;
                         break;
                     }
-                    case 4:{
+                    case 4: {
                         //曝光调节
                         mPhotoEnhance.setExposure(mProgress);
                         type = PhotoEnhance.ENHANCE_EXPOSURE;
@@ -225,6 +225,7 @@ public class ToneFragment extends BaseEditFragment implements View.OnClickListen
             backToMain();
         }
     }
+
     /**
      * 返回主菜单
      */
@@ -254,16 +255,16 @@ public class ToneFragment extends BaseEditFragment implements View.OnClickListen
      */
     public void applyToneImage() {
 
-        if(editBitmap!=activity.getMainBit()){
-            activity.changeMainBitmap(editBitmap,true);
-        }else {
-            activity.changeMainBitmap(activity.getMainBit(),true);
+        if (editBitmap != activity.getMainBit()) {
+            activity.changeMainBitmap(editBitmap, true);
+        } else {
+            activity.changeMainBitmap(activity.getMainBit(), true);
         }
         backToMain();
     }
 
-    private void showOnClick(View itemView){
-        if(currentItem!=itemView && currentItem!=null ){
+    private void showOnClick(View itemView) {
+        if (currentItem != itemView && currentItem != null) {
             tvToneName = currentItem.findViewById(R.id.tv_tone_name);
             tvToneValue = currentItem.findViewById(R.id.tv_tone_value);
             tvToneName.setTextColor(getResources().getColor(R.color.white));

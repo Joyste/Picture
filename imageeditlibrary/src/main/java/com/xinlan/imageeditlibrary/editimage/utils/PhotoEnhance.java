@@ -43,7 +43,6 @@ public class PhotoEnhance {
     private float mExposureNum = 0.0f;
 
 
-
     private ColorMatrix mAllMatrix = null;
     private ColorMatrix mSaturationMatrix = null;
     private ColorMatrix mContrastMatrix = null;
@@ -105,8 +104,6 @@ public class PhotoEnhance {
     }
 
 
-
-
     public float getHue() {
         return mHueNum;
     }
@@ -135,7 +132,6 @@ public class PhotoEnhance {
         mExposureNum = exposureNum * 1.0f / 128;
         return this;
     }
-
 
 
     public PhotoEnhance setBitmap(Bitmap bitmap) {
@@ -196,16 +192,19 @@ public class PhotoEnhance {
         }
 
         switch (type) {
-            case ENHANCE_SATURATION:
+            case ENHANCE_SATURATION: {
                 mSaturationMatrix.reset();
                 mSaturationMatrix.setSaturation(mSaturationNum);
                 break;
+            }
 
-            case ENHANCE_BRIGHTNESS:
+            case ENHANCE_BRIGHTNESS: {
                 mBrightnessMatrix.reset();
                 mBrightnessMatrix.set(new float[]{1, 0, 0, 0, mBrightNum, 0, 1, 0, 0, mBrightNum, 0, 0, 1, 0, mBrightNum, 0, 0, 0, 1, 0});
                 break;
-            case ENHANCE_CONTRAST:
+            }
+
+            case ENHANCE_CONTRAST: {
                 /* 在亮度不变的情况下，提高对比度必定要降低亮度 */
                 float regulateBright = 0;
                 regulateBright = (1 - mContrastNum) * 128;
@@ -213,18 +212,22 @@ public class PhotoEnhance {
                 mContrastMatrix.reset();
                 mContrastMatrix.set(new float[]{mContrastNum, 0, 0, 0, regulateBright, 0, mContrastNum, 0, 0, regulateBright, 0, 0, mContrastNum, 0, regulateBright, 0, 0, 0, 1, 0});
                 break;
-            case ENHANCE_HUE:
+            }
+
+            case ENHANCE_HUE: {
                 mHueMatrix.reset();
                 mHueMatrix.setRotate(0, mHueNum); // 控制让红色区在色轮上旋转的角度
                 mHueMatrix.setRotate(1, mHueNum); // 控制让绿红色区在色轮上旋转的角度
                 mHueMatrix.setRotate(2, mHueNum); // 控制让蓝色区在色轮上旋转的角度
                 // 这里相当于改变的是全图的色相
                 break;
-            case ENHANCE_EXPOSURE:
+            }
+
+            case ENHANCE_EXPOSURE: {
                 mExposureMatrix.reset();
                 mExposureMatrix.setScale(mExposureNum, mExposureNum, mExposureNum, 1);
                 break;
-
+            }
             default:
                 break;
         }

@@ -64,7 +64,7 @@ public class ToneListAdapter extends RecyclerView.Adapter<ToneListAdapter.ViewHo
 
         holder.ivToneIcon.setImageResource(list.get(position).getIcon());
         holder.tvToneName.setText(context.getResources().getString(list.get(position).getName()));
-        holder.tvToneValue.setText(String.valueOf(list.get(position).getValue()-128));
+        holder.tvToneValue.setText(String.valueOf(list.get(position).getValue() - 128));
     }
 
 

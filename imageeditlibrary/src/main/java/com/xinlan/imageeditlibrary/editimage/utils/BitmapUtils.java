@@ -312,54 +312,50 @@ public class BitmapUtils {
     /**
      * Resize a bitmap object to fit the passed width and height
      *
-     * @param input
-     *           The bitmap to be resized
-     * @param destWidth
-     *           Desired maximum width of the result bitmap
-     * @param destHeight
-     *           Desired maximum height of the result bitmap
+     * @param input      The bitmap to be resized
+     * @param destWidth  Desired maximum width of the result bitmap
+     * @param destHeight Desired maximum height of the result bitmap
      * @return A new resized bitmap
-     * @throws OutOfMemoryError
-     *            if the operation exceeds the available vm memory
+     * @throws OutOfMemoryError if the operation exceeds the available vm memory
      */
-    public static Bitmap resizeBitmap( final Bitmap input, int destWidth, int destHeight, int rotation ) throws OutOfMemoryError {
+    public static Bitmap resizeBitmap(final Bitmap input, int destWidth, int destHeight, int rotation) throws OutOfMemoryError {
 
         int dstWidth = destWidth;
         int dstHeight = destHeight;
         final int srcWidth = input.getWidth();
         final int srcHeight = input.getHeight();
 
-        if ( rotation == 90 || rotation == 270 ) {
+        if (rotation == 90 || rotation == 270) {
             dstWidth = destHeight;
             dstHeight = destWidth;
         }
 
         boolean needsResize = false;
         float p;
-        if ( ( srcWidth > dstWidth ) || ( srcHeight > dstHeight ) ) {
+        if ((srcWidth > dstWidth) || (srcHeight > dstHeight)) {
             needsResize = true;
-            if ( ( srcWidth > srcHeight ) && ( srcWidth > dstWidth ) ) {
+            if ((srcWidth > srcHeight) && (srcWidth > dstWidth)) {
                 p = (float) dstWidth / (float) srcWidth;
-                dstHeight = (int) ( srcHeight * p );
+                dstHeight = (int) (srcHeight * p);
             } else {
                 p = (float) dstHeight / (float) srcHeight;
-                dstWidth = (int) ( srcWidth * p );
+                dstWidth = (int) (srcWidth * p);
             }
         } else {
             dstWidth = srcWidth;
             dstHeight = srcHeight;
         }
 
-        if ( needsResize || rotation != 0 ) {
+        if (needsResize || rotation != 0) {
             Bitmap output;
 
-            if ( rotation == 0 ) {
-                output = Bitmap.createScaledBitmap( input, dstWidth, dstHeight, true );
+            if (rotation == 0) {
+                output = Bitmap.createScaledBitmap(input, dstWidth, dstHeight, true);
             } else {
                 Matrix matrix = new Matrix();
-                matrix.postScale( (float) dstWidth / srcWidth, (float) dstHeight / srcHeight );
-                matrix.postRotate( rotation );
-                output = Bitmap.createBitmap( input, 0, 0, srcWidth, srcHeight, matrix, true );
+                matrix.postScale((float) dstWidth / srcWidth, (float) dstHeight / srcHeight);
+                matrix.postRotate(rotation);
+                output = Bitmap.createBitmap(input, 0, 0, srcWidth, srcHeight, matrix, true);
             }
             return output;
         } else
@@ -376,8 +372,8 @@ public class BitmapUtils {
      * @return
      * @throws OutOfMemoryError
      */
-    public static Bitmap resizeBitmap( final Bitmap input, int destWidth, int destHeight ) throws OutOfMemoryError {
-        return resizeBitmap( input, destWidth, destHeight, 0 );
+    public static Bitmap resizeBitmap(final Bitmap input, int destWidth, int destHeight) throws OutOfMemoryError {
+        return resizeBitmap(input, destWidth, destHeight, 0);
     }
 
     public static Bitmap getSampledBitmap(String filePath, int reqWidth, int reqHeight) {
@@ -391,7 +387,7 @@ public class BitmapUtils {
 
         final Bitmap retBit = BitmapFactory.decodeFile(filePath, options);
         final int degree = readPictureDegree(filePath);
-        return degree > 0?rotateBitmap(degree , retBit):retBit;
+        return degree > 0 ? rotateBitmap(degree, retBit) : retBit;
     }
 
 
@@ -474,6 +470,7 @@ public class BitmapUtils {
 
     /**
      * 旋转图片
+     *
      * @param degree 被旋转角度
      * @param bitmap 图片对象
      * @return 旋转后的图片
@@ -526,7 +523,6 @@ public class BitmapUtils {
 
         return dstBitmap;
     }
-
 
 
     /**
