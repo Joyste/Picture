@@ -22,12 +22,11 @@ import com.xinlan.imageeditlibrary.editimage.EditImageActivity;
 import com.xinlan.imageeditlibrary.editimage.ModuleConfig;
 import com.xinlan.imageeditlibrary.editimage.adapter.ToneListAdapter;
 import com.xinlan.imageeditlibrary.editimage.model.ToneItem;
+import com.xinlan.imageeditlibrary.editimage.utils.PhotoEnhance;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-
-import static com.xinlan.imageeditlibrary.editimage.utils.BitmapUtils.changeImageRotate;
-import static com.xinlan.imageeditlibrary.editimage.utils.BitmapUtils.changeImageSaturation;
 
 public class ToneFragment extends BaseEditFragment implements View.OnClickListener {
     public static final int INDEX = ModuleConfig.INDEX_TONE;
@@ -37,6 +36,7 @@ public class ToneFragment extends BaseEditFragment implements View.OnClickListen
     private View backToMenu;// 返回主菜单
     private RecyclerView mToneListView;//色值列表View
     private SeekBar mToneSeekBar;//色值列表View
+    private TextView seekbarValue;
     private ToneListAdapter mToneListAdapter;
     private List<ToneItem> dataList = new ArrayList<>();
 
@@ -47,11 +47,16 @@ public class ToneFragment extends BaseEditFragment implements View.OnClickListen
     private TextView tvToneName;
     private TextView tvToneValue;
     private ImageView ivToneIcon;
-    private int startProgress;
 
+    private View currentItem;
+
+    private static final int MAX_VALUE = 255;
+    private static final int MID_VALUE = 128;
+
+    private PhotoEnhance mPhotoEnhance;
+    private int mProgress = 0;
 
     private Bitmap editBitmap;
-
 
     public static ToneFragment newInstance() {
         ToneFragment fragment = new ToneFragment();
@@ -84,22 +89,26 @@ public class ToneFragment extends BaseEditFragment implements View.OnClickListen
      * 初始化Item数据
      */
     private void initData(){
-        dataList.add(new ToneItem(R.drawable.crop_normal,R.string.luminance,0 ));//亮度
-        dataList.add(new ToneItem(R.drawable.crop_normal,R.string.contrast,0 ));//对比度
-        dataList.add(new ToneItem(R.drawable.crop_normal,R.string.saturation,0 ));//饱和度
-        dataList.add(new ToneItem(R.drawable.crop_normal,R.string.hue,0 ));//色调
+        dataList.add(new ToneItem(R.drawable.crop_normal,R.string.luminance,MID_VALUE ));//亮度
+        dataList.add(new ToneItem(R.drawable.crop_normal,R.string.contrast,MID_VALUE ));//对比度
+        dataList.add(new ToneItem(R.drawable.crop_normal,R.string.saturation,MID_VALUE ));//饱和度
+        dataList.add(new ToneItem(R.drawable.crop_normal,R.string.hue,MID_VALUE ));//色相
+        dataList.add(new ToneItem(R.drawable.crop_normal,R.string.exposure,MID_VALUE ));//曝光
+        mPhotoEnhance = new PhotoEnhance();
+        mPhotoEnhance.setBitmap(editBitmap);
+        mProgress = MID_VALUE;
     }
 
     /**
      * 初始化SeekBar
      */
     private void initStokeWidthPopWindow() {
-        popView = LayoutInflater.from(activity).
-                inflate(R.layout.view_set_stoke_width, null);
+        popView = LayoutInflater.from(activity).inflate(R.layout.view_set_stoke_width, null);
         setToneValueWindow = new PopupWindow(popView, ViewGroup.LayoutParams.MATCH_PARENT
                 , ViewGroup.LayoutParams.WRAP_CONTENT);
 
         mToneSeekBar = (SeekBar) popView.findViewById(R.id.stoke_width_seekbar);
+        seekbarValue = popView.findViewById(R.id.seekbar_value);
 
         setToneValueWindow.setFocusable(false);
         setToneValueWindow.setOutsideTouchable(false);
@@ -125,11 +134,9 @@ public class ToneFragment extends BaseEditFragment implements View.OnClickListen
             @Override
             public void onItemClick(View itemView, int position) {
                 POSITION = position;
-                setToneValue();
-//                tvToneName = itemView.findViewById(R.id.tv_tone_name);
-//                tvToneName.setTextColor(R.color.materialcolorpicker__blue);
-//                tvToneValue = itemView.findViewById(R.id.tv_tone_value);
-//                tvToneValue.setTextColor(R.color.materialcolorpicker__blue);
+                setToneValue(itemView);
+                showOnClick(itemView);
+                currentItem = itemView;
             }
         });
         mToneListView.setAdapter(mToneListAdapter);
@@ -140,53 +147,19 @@ public class ToneFragment extends BaseEditFragment implements View.OnClickListen
     /**
      * 设置数据
      */
-    protected void setToneValue() {
+    protected void setToneValue(View itemView) {
         if (popView.getMeasuredHeight() == 0) {
             popView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
         }
 
-        mToneSeekBar.setMax(100);
-
-        startProgress = dataList.get(POSITION).getValue();
-        mToneSeekBar.setProgress(startProgress);
-
+        mToneSeekBar.setMax(MAX_VALUE);
+        mToneSeekBar.setProgress(dataList.get(POSITION).getValue());
 
         mToneSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                dataList.get(POSITION).setValue(progress);
-                mToneListAdapter.setList(dataList);
-                mToneListView.setAdapter(mToneListAdapter);
-
-                Log.d("===============","+++++");
-
-                switch (POSITION){
-                    case 0:{
-                        //亮度调节
-
-                        break;
-                    }
-                    case 1:{
-                        //对比度调节
-
-                        break;
-                    }
-                    case 2:{
-                        //饱和度调节
-                        editBitmap = changeImageSaturation(editBitmap,progress-startProgress);
-                        startProgress = progress;
-                        break;
-                    }
-                    case 3:{
-                        //色相调节
-                        editBitmap = changeImageRotate(editBitmap,progress);
-                        break;
-                    }
-                }
-
-                activity.mainImage.setImageBitmap(editBitmap);
-
-
+                mProgress = progress;
+                seekbarValue.setText(String.valueOf(progress-MID_VALUE));
             }
 
             @Override
@@ -196,7 +169,46 @@ public class ToneFragment extends BaseEditFragment implements View.OnClickListen
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
+                dataList.get(POSITION).setValue(mProgress);
+                tvToneValue = itemView.findViewById(R.id.tv_tone_value);
+                tvToneValue.setText(String.valueOf(mProgress-MID_VALUE));
 
+                int type = 0;
+                switch (POSITION){
+                    case 0:{
+                        //亮度调节
+                        mPhotoEnhance.setBrightness(mProgress);
+                        type = PhotoEnhance.ENHANCE_BRIGHTNESS;
+                        break;
+                    }
+                    case 1:{
+                        //对比度调节
+                        mPhotoEnhance.setContrast(mProgress);
+                        type = PhotoEnhance.ENHANCE_CONTRAST;
+                        break;
+                    }
+                    case 2:{
+                        //饱和度调节
+                        mPhotoEnhance.setSaturation(mProgress);
+                        type = PhotoEnhance.ENHANCE_SATURATION;
+                        break;
+                    }
+                    case 3:{
+                        //色相调节
+                        mPhotoEnhance.setHue(mProgress);
+                        type = PhotoEnhance.ENHANCE_HUE;
+                        break;
+                    }
+                    case 4:{
+                        //曝光调节
+                        mPhotoEnhance.setExposure(mProgress);
+                        type = PhotoEnhance.ENHANCE_EXPOSURE;
+                        break;
+                    }
+                }
+
+                editBitmap = mPhotoEnhance.handleImage(type);
+                activity.mainImage.setImageBitmap(editBitmap);
             }
         });
 
@@ -220,9 +232,7 @@ public class ToneFragment extends BaseEditFragment implements View.OnClickListen
     public void backToMain() {
         activity.mode = EditImageActivity.MODE_NONE;
         activity.bottomGallery.setCurrentItem(MainMenuFragment.INDEX);
-
         activity.mainImage.setImageBitmap(activity.getMainBit());// 返回原图
-
         activity.mainImage.setVisibility(View.VISIBLE);
         activity.mainImage.setScaleEnabled(true);
         activity.bannerFlipper.showPrevious();
@@ -239,16 +249,32 @@ public class ToneFragment extends BaseEditFragment implements View.OnClickListen
         activity.bannerFlipper.showNext();
     }
 
-
-
     /**
      * 保存图片
      */
     public void applyToneImage() {
 
-        activity.changeMainBitmap(activity.getMainBit(),true);
-
+        if(editBitmap!=activity.getMainBit()){
+            activity.changeMainBitmap(editBitmap,true);
+        }else {
+            activity.changeMainBitmap(activity.getMainBit(),true);
+        }
         backToMain();
     }
+
+    private void showOnClick(View itemView){
+        if(currentItem!=itemView && currentItem!=null ){
+            tvToneName = currentItem.findViewById(R.id.tv_tone_name);
+            tvToneValue = currentItem.findViewById(R.id.tv_tone_value);
+            tvToneName.setTextColor(getResources().getColor(R.color.white));
+            tvToneValue.setTextColor(getResources().getColor(R.color.white));
+        }
+
+        tvToneName = itemView.findViewById(R.id.tv_tone_name);
+        tvToneValue = itemView.findViewById(R.id.tv_tone_value);
+        tvToneName.setTextColor(getResources().getColor(R.color.materialcolorpicker__blue));
+        tvToneValue.setTextColor(getResources().getColor(R.color.materialcolorpicker__blue));
+    }
+
 
 }

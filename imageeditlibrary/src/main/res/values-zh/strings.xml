@@ -27,6 +27,8 @@
     <string name="contrast">对比度</string>
     <string name="saturation">饱和度</string>
     <string name="hue">色相</string>
+    <string name="exposure">曝光</string>
+    <string name="hint_seekbar_value">0</string>
     <string-array name="filters">
         <item>原始</item>
         <item>软化</item>

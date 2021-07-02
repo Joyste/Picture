@@ -57,16 +57,6 @@ public class BitmapUtils {
 
     public static final long MAX_SZIE = 1024 * 512;// 500KB
 
-//    public static Bitmap loadImageByPath(final String imagePath, int reqWidth,
-//                                         int reqHeight) {
-//        File file = new File(imagePath);
-//        if (file.length() < MAX_SZIE) {
-//            return getSampledBitmap(imagePath, reqWidth, reqHeight);
-//        } else {// 压缩图片
-//            return getImageCompress(imagePath);
-//        }
-//    }
-
     public static int getOrientation(final String imagePath) {
         int rotate = 0;
         try {
@@ -514,7 +504,7 @@ public class BitmapUtils {
      * @param rotate
      * @return
      */
-    public static Bitmap changeImageRotate(Bitmap srcBitmap, int rotate) {
+    public static Bitmap changeImageRotate(Bitmap srcBitmap, float rotate) {
 
         //调整色相
         ColorMatrix rotateMatrix = new ColorMatrix();
@@ -537,42 +527,16 @@ public class BitmapUtils {
         return dstBitmap;
     }
 
-    /**
-     * 调整图片的饱和度
-     *
-     * @param srcBitmap
-     * @param saturation
-     * @return
-     */
-    public static Bitmap changeImageSaturation(Bitmap srcBitmap, int saturation) {
 
-        //调整色彩饱和度
-        ColorMatrix saturationMatrix = new ColorMatrix();
-        saturationMatrix.setSaturation(saturation);
-
-        ColorMatrix colorMatrix = new ColorMatrix();
-        colorMatrix.postConcat(saturationMatrix);
-
-        //创建一个大小相同的空白Bitmap
-        Bitmap dstBitmap = Bitmap.createBitmap(srcBitmap.getWidth(), srcBitmap.getHeight(), Bitmap.Config.ARGB_8888);
-        //载入Canvas,Paint
-        Canvas canvas = new Canvas(dstBitmap);
-        Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        paint.setColorFilter(new ColorMatrixColorFilter(colorMatrix));
-        //绘图
-        canvas.drawBitmap(srcBitmap, 0, 0, paint);
-
-        return dstBitmap;
-    }
 
     /**
-     * 调整图片的灰度
+     * 调整图片的亮度
      *
      * @param srcBitmap
      * @param scale
      * @return
      */
-    public static Bitmap changeImageScale(Bitmap srcBitmap, int scale) {
+    public static Bitmap changeImageScale(Bitmap srcBitmap, float scale) {
 
         //调整灰度
         ColorMatrix scaleMatrix = new ColorMatrix();

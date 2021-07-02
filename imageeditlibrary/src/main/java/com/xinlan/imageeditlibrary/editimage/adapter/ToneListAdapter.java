@@ -18,7 +18,7 @@ import com.xinlan.imageeditlibrary.editimage.model.ToneItem;
 import java.util.List;
 
 /**
- * 小圆点 滚动的适配器
+ * 调整菜单的适配器
  */
 public class ToneListAdapter extends RecyclerView.Adapter<ToneListAdapter.ViewHolder> {
 
@@ -64,7 +64,7 @@ public class ToneListAdapter extends RecyclerView.Adapter<ToneListAdapter.ViewHo
 
         holder.ivToneIcon.setImageResource(list.get(position).getIcon());
         holder.tvToneName.setText(context.getResources().getString(list.get(position).getName()));
-        holder.tvToneValue.setText(String.valueOf(list.get(position).getValue()));
+        holder.tvToneValue.setText(String.valueOf(list.get(position).getValue()-128));
     }
 
 
