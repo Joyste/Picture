@@ -1,5 +1,10 @@
 package com.test.picture.view.activity;
 
+import android.app.ActivityManager;
+import android.app.Dialog;
+import android.app.ProgressDialog;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -7,6 +12,8 @@ import android.view.Window;
 import android.view.WindowManager;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import java.util.List;
 
 public abstract class BaseActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -110,5 +117,17 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
 
     }
 
+    public static Dialog getLoadingDialog(Context context, int titleId,
+                                          boolean canCancel) {
+        return getLoadingDialog(context,context.getString(titleId),canCancel);
+    }
 
+
+    public static Dialog getLoadingDialog(Context context, String title,
+                                          boolean canCancel) {
+        ProgressDialog dialog = new ProgressDialog(context);
+        dialog.setCancelable(canCancel);
+        dialog.setMessage(title);
+        return dialog;
+    }
 }

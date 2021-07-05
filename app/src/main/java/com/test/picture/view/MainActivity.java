@@ -15,6 +15,7 @@ import androidx.core.content.ContextCompat;
 
 import com.huantansheng.easyphotos.EasyPhotos;
 import com.huantansheng.easyphotos.models.album.entity.Photo;
+import com.test.picture.view.activity.CustomPuzzleActivity;
 import com.xinlan.imageeditlibrary.editimage.EditImageActivity;
 import com.test.picture.R;
 import com.test.picture.tool.PhotoTool;
@@ -26,6 +27,7 @@ import com.test.picture.view.activity.ShowResultActivity;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class MainActivity extends BaseActivity {
@@ -34,17 +36,17 @@ public class MainActivity extends BaseActivity {
     /**
      * 相机权限请求标识
      */
-    public static final int REQUEST_CAMERA_CODE = 0x100;
+    public static final int REQUEST_CAMERA_CODE = 0x100;//拍照
 
-    public static final int REQUEST_PUZZLE_CODE = 4;
+    public static final int REQUEST_PUZZLE_CODE = 4;  //拼图
 
-    public static final int REQUEST_SINGLE_CODE = 5;
+    public static final int REQUEST_SINGLE_CODE = 5; //图库单选
 
-    public static final int REQUEST_MULTIPLE_CODE_FOR_PUZZLE = 6;
+    public static final int REQUEST_MULTIPLE_CODE_FOR_PUZZLE = 6; //多选
 
-    public static final int REQUEST_CUSTOM_PUZZLE_CODE = 7;
+    public static final int REQUEST_CUSTOM_PUZZLE_CODE = 7; //自定义拼图
 
-    public static final int REQUEST_EDITIMAGE_CODE = 8;
+    public static final int REQUEST_EDITIMAGE_CODE = 8;//编辑图片
 
     public static final int ACTION_REQUEST_EDITIMAGE = 9;
 
@@ -199,17 +201,15 @@ public class MainActivity extends BaseActivity {
                 case REQUEST_CUSTOM_PUZZLE_CODE:{
                     //获取多选的数据
                     ArrayList<Photo> resultPhotos = data.getParcelableArrayListExtra(EasyPhotos.RESULT_PHOTOS);
-//                    selectedPhotoList.clear();
-//                    selectedPhotoList.addAll(resultPhotos);
 
-//                    if (resultPhotos.size() == 1) {
-//                        //如果图片数量为1，则提示用户并重新选择。
-//                        ToastUtil.showShortToast(this.getString(R.string.puzzle_toast));
-//                        selectFromAlbumMultiple();
-//                    } else {
-//                        //大于1，则进入拼图界面
-//                        PhotoTool.getInstance().startPuzzleWithPhotos(MainActivity.this, resultPhotos, REQUEST_PUZZLE_CODE);
-//                    }
+                    ArrayList<String> resultPhotosPath = new ArrayList<>();
+
+                    for(Photo photo:resultPhotos){
+                        resultPhotosPath.add(photo.path);
+                    }
+                    Bundle bundle = new Bundle();
+                    bundle.putStringArrayList("pathList",resultPhotosPath);
+                    startActivity(CustomPuzzleActivity.class, bundle);
                     break;
                 }
                 case ACTION_REQUEST_EDITIMAGE:{
@@ -227,22 +227,16 @@ public class MainActivity extends BaseActivity {
         }
     }
 
+
+
     private void handleEditorImage(Intent data) {
         String newFilePath = data.getStringExtra(EditImageActivity.EXTRA_OUTPUT);
         boolean isImageEdit = data.getBooleanExtra(EditImageActivity.IMAGE_IS_EDIT, false);
 
-        if (isImageEdit){
-            showResult(newFilePath);
-        }else{//未编辑  还是用原来的图片
-            newFilePath = data.getStringExtra(EditImageActivity.FILE_PATH);;
+        if (!isImageEdit){//未编辑  还是用原来的图片
+            newFilePath = data.getStringExtra(EditImageActivity.FILE_PATH);
         }
-
-//        //System.out.println("newFilePath---->" + newFilePath);
-//        //File file = new File(newFilePath);
-//        //System.out.println("newFilePath size ---->" + (file.length() / 1024)+"KB");
-//        Log.d("image is edit", isImageEdit + "");
-//        EditImageActivity.LoadImageTask loadTask = new EditImageActivity.LoadImageTask();
-//        loadTask.execute(newFilePath);
+        showResult(newFilePath);
     }
 
     /**

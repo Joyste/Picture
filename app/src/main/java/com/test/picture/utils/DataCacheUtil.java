@@ -4,15 +4,15 @@ import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.Map;
 
-public class DataUtil {
+public class DataCacheUtil {
 
-    private static DataUtil instance;
+    private static DataCacheUtil instance;
 
-    public static DataUtil getInstance() {
+    public static DataCacheUtil getInstance() {
         if (instance == null) {
-            synchronized (DataUtil.class) {
+            synchronized (DataCacheUtil.class) {
                 if (instance == null) {
-                    instance = new DataUtil();
+                    instance = new DataCacheUtil();
                 }
             }
         }

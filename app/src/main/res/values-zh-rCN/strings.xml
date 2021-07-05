@@ -90,5 +90,9 @@
     <string name="gif_easy_photos">动图</string>
 
     <string name="video_easy_photos">视频</string>
+    <string name="custom_puzzle_confirm">完成</string>
+    <string name="custom_puzzle_cancel">取消</string>
+    <string name="select_album_single">选择图片</string>
+
 
 </resources>

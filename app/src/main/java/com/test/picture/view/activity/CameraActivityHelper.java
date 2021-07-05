@@ -32,7 +32,7 @@ import android.widget.RelativeLayout;
 import androidx.core.app.ActivityCompat;
 
 import com.test.picture.utils.BitmapUtils;
-import com.test.picture.utils.DataUtil;
+import com.test.picture.utils.DataCacheUtil;
 import com.test.picture.utils.PhoneUtil;
 
 import java.nio.ByteBuffer;
@@ -207,7 +207,7 @@ public class CameraActivityHelper {
                     image.close();
 
                     //Intent 无法传过大的数据，将数据转存进hashmap中。
-                    DataUtil.getInstance().saveData("photo", bitmap);
+                    DataCacheUtil.getInstance().saveData("photo", bitmap);
                     mActivity.startActivity(ShowResultActivity.class);
                 }
             }, mCameraHandler);

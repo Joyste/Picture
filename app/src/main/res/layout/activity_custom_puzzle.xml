@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".view.activity.CustomPuzzleActivity">
+    <FrameLayout
+        android:id="@+id/work_space"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        >
+
+
+        <com.xinlan.imageeditlibrary.editimage.view.StickerView
+            android:id="@+id/sticker_panel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@color/white"
+            />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/text20"
+            android:layout_marginTop="@dimen/text10"
+            >
+
+            <TextView
+                android:id="@+id/custom_puzzle_cancel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/custom_puzzle_cancel"
+                android:textColor="@color/black"/>
+
+            <TextView
+                android:id="@+id/custom_puzzle_confirm"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:text="@string/custom_puzzle_confirm"
+                android:textColor="@color/easy_photos_fg_accent"/>
+
+        </RelativeLayout>
+    </FrameLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        >
+        <Button
+            android:id="@+id/select_album_single"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/select_album_single"/>
+
+    </LinearLayout>
+</LinearLayout>

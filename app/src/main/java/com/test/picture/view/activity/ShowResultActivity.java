@@ -9,17 +9,14 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 
-import androidx.annotation.Nullable;
-
 import com.huantansheng.easyphotos.EasyPhotos;
 import com.huantansheng.easyphotos.models.album.entity.Photo;
 import com.xinlan.imageeditlibrary.editimage.EditImageActivity;
 import com.test.picture.R;
 import com.test.picture.tool.PhotoTool;
-import com.test.picture.utils.DataUtil;
+import com.test.picture.utils.DataCacheUtil;
 import com.test.picture.utils.FileUtils;
 import com.test.picture.utils.ToastUtil;
-import com.test.picture.view.MainActivity;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -69,7 +66,7 @@ public class ShowResultActivity extends BaseActivity {
             bitmap = BitmapFactory.decodeFile(path);
             btnSave.setVisibility(View.GONE);
         } else {
-            bitmap = (Bitmap) DataUtil.getInstance().getData("photo");
+            bitmap = (Bitmap) DataCacheUtil.getInstance().getData("photo");
         }
 
         ivShowPhoto.setImageBitmap(bitmap);

@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.text.TextUtils;
+import android.view.View;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -95,8 +96,8 @@ public class BitmapUtils {
     /**
      * 高级图片质量压缩
      *
-     * @param bitmap  位图
-     * @param width 压缩后的宽度，单位像素
+     * @param bitmap 位图
+     * @param width  压缩后的宽度，单位像素
      */
     public static Bitmap imageZoom(Bitmap bitmap, double width) {
         // 将bitmap放至数组中，意在获得bitmap的大小（与实际读取的原文件要大）
@@ -164,6 +165,5 @@ public class BitmapUtils {
         }
         return true;
     }
-
 
 }
