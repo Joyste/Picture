@@ -13,6 +13,13 @@
         android:layout_weight="1"
         >
 
+        <ImageView
+            android:id="@+id/iv_panel"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:background="@color/white"
+            />
 
         <com.xinlan.imageeditlibrary.editimage.view.StickerView
             android:id="@+id/sticker_panel"
@@ -21,6 +28,7 @@
             android:layout_gravity="center"
             android:background="@color/white"
             />
+
 
         <RelativeLayout
             android:layout_width="match_parent"

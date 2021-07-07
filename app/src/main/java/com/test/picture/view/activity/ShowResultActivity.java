@@ -95,7 +95,7 @@ public class ShowResultActivity extends BaseActivity {
                 String path = savePicture(bitmap);
                 Log.d(TAG, path);
                 ToastUtil.showShortToast(R.string.toast_save + path);
-                EasyPhotos.notifyMedia(this,path);
+                EasyPhotos.notifyMedia(this, path);
                 finish();
                 break;
             }
@@ -115,7 +115,7 @@ public class ShowResultActivity extends BaseActivity {
      */
     private void StartEditImage() {
         File outputFile = FileUtils.getEditFile();
-        EditImageActivity.start(this,path,outputFile.getAbsolutePath(),REQUEST_EDITIMAGE_CODE);
+        EditImageActivity.start(this, path, outputFile.getAbsolutePath(), REQUEST_EDITIMAGE_CODE);
     }
 
     /**
@@ -123,7 +123,7 @@ public class ShowResultActivity extends BaseActivity {
      */
     private void StartPuzzle() {
         File file = new File(path);
-        Photo photo = new Photo(file.getName(),null,path,0,0,0,0,0,0,"JPEG");
+        Photo photo = new Photo(file.getName(), null, path, 0, 0, 0, 0, 0, 0, "JPEG");
         ArrayList<Photo> selectedPhotoList = new ArrayList<>();
         selectedPhotoList.add(photo);
         PhotoTool.getInstance().openAlbumForMultiple(this, 9, selectedPhotoList, REQUEST_MULTIPLE_CODE_FOR_PUZZLE);
@@ -152,6 +152,7 @@ public class ShowResultActivity extends BaseActivity {
 
     /**
      * 显示图片
+     *
      * @param newFilePath
      */
     private void showResult(String newFilePath) {
@@ -166,7 +167,7 @@ public class ShowResultActivity extends BaseActivity {
 
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
-                case REQUEST_EDITIMAGE_CODE:{
+                case REQUEST_EDITIMAGE_CODE: {
                     handleEditorImage(data);
                     break;
                 }

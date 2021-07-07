@@ -16,6 +16,7 @@ import androidx.core.content.ContextCompat;
 import com.huantansheng.easyphotos.EasyPhotos;
 import com.huantansheng.easyphotos.models.album.entity.Photo;
 import com.test.picture.view.activity.CustomPuzzleActivity;
+import com.test.picture.view.activity.TakePhotoActivity;
 import com.xinlan.imageeditlibrary.editimage.EditImageActivity;
 import com.test.picture.R;
 import com.test.picture.tool.PhotoTool;
@@ -58,7 +59,6 @@ public class MainActivity extends BaseActivity {
     private Button customPuzzle;//自定义拼图
     private int imageWidth, imageHeight;//
     private ArrayList<Photo> selectedPhotoList = new ArrayList<>();
-
 
 
     @Override
@@ -116,7 +116,7 @@ public class MainActivity extends BaseActivity {
                 selectFromAlbumSingle();
                 break;
             }
-            case R.id.custom_puzzle:{
+            case R.id.custom_puzzle: {
                 startCustomPuzzle();
                 break;
             }
@@ -155,7 +155,7 @@ public class MainActivity extends BaseActivity {
     /**
      * 自定义拼图
      */
-    private void startCustomPuzzle(){
+    private void startCustomPuzzle() {
         PhotoTool.getInstance().openAlbumForMultiple(this, 9, selectedPhotoList, REQUEST_CUSTOM_PUZZLE_CODE);
     }
 
@@ -198,27 +198,27 @@ public class MainActivity extends BaseActivity {
                     showResult(puzzlePhoto.path);
                     break;
                 }
-                case REQUEST_CUSTOM_PUZZLE_CODE:{
+                case REQUEST_CUSTOM_PUZZLE_CODE: {
                     //获取多选的数据
                     ArrayList<Photo> resultPhotos = data.getParcelableArrayListExtra(EasyPhotos.RESULT_PHOTOS);
 
                     ArrayList<String> resultPhotosPath = new ArrayList<>();
 
-                    for(Photo photo:resultPhotos){
+                    for (Photo photo : resultPhotos) {
                         resultPhotosPath.add(photo.path);
                     }
                     Bundle bundle = new Bundle();
-                    bundle.putStringArrayList("pathList",resultPhotosPath);
+                    bundle.putStringArrayList("pathList", resultPhotosPath);
                     startActivity(CustomPuzzleActivity.class, bundle);
                     break;
                 }
-                case ACTION_REQUEST_EDITIMAGE:{
+                case ACTION_REQUEST_EDITIMAGE: {
                     ArrayList<Photo> resultPhotos = data.getParcelableArrayListExtra(EasyPhotos.RESULT_PHOTOS);
                     File outputFile = FileUtils.getEditFile();
-                    EditImageActivity.start(this,resultPhotos.get(0).path,outputFile.getAbsolutePath(),REQUEST_EDITIMAGE_CODE);
+                    EditImageActivity.start(this, resultPhotos.get(0).path, outputFile.getAbsolutePath(), REQUEST_EDITIMAGE_CODE);
                     break;
                 }
-                case REQUEST_EDITIMAGE_CODE:{
+                case REQUEST_EDITIMAGE_CODE: {
                     handleEditorImage(data);
                     break;
                 }
@@ -228,12 +228,11 @@ public class MainActivity extends BaseActivity {
     }
 
 
-
     private void handleEditorImage(Intent data) {
         String newFilePath = data.getStringExtra(EditImageActivity.EXTRA_OUTPUT);
         boolean isImageEdit = data.getBooleanExtra(EditImageActivity.IMAGE_IS_EDIT, false);
 
-        if (!isImageEdit){//未编辑  还是用原来的图片
+        if (!isImageEdit) {//未编辑  还是用原来的图片
             newFilePath = data.getStringExtra(EditImageActivity.FILE_PATH);
         }
         showResult(newFilePath);
@@ -265,7 +264,8 @@ public class MainActivity extends BaseActivity {
                     new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CAMERA_CODE);
         } else {
             // 权限已经申请，直接拍照
-            startActivity(CameraActivity.class);
+//            startActivity(CameraActivity.class);
+            startActivity(TakePhotoActivity.class);
 
         }
     }

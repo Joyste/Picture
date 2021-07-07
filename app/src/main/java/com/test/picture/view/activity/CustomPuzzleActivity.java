@@ -1,7 +1,5 @@
 package com.test.picture.view.activity;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -9,10 +7,10 @@ import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.huantansheng.easyphotos.EasyPhotos;
@@ -20,11 +18,9 @@ import com.huantansheng.easyphotos.models.album.entity.Photo;
 import com.test.picture.R;
 import com.test.picture.tool.PhotoTool;
 import com.test.picture.utils.FileUtils;
-import com.test.picture.view.task.StickerTask;
-import com.xinlan.imageeditlibrary.editimage.EditImageActivity;
+import com.test.picture.task.StickerTask;
 import com.xinlan.imageeditlibrary.editimage.view.StickerItem;
 import com.xinlan.imageeditlibrary.editimage.view.StickerView;
-import com.test.picture.utils.BitmapUtils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -42,6 +38,7 @@ public class CustomPuzzleActivity extends BaseActivity {
     private ArrayList<String> pathList;
     private Handler handler = new Handler();
     private SaveStickersTask mSaveTask;
+    private ImageView ivPanel;
 
     private Bitmap bitmap;
 
@@ -63,6 +60,7 @@ public class CustomPuzzleActivity extends BaseActivity {
         customPuzzleConfirm = findViewById(R.id.custom_puzzle_confirm);
         selectAlbumSingle = findViewById(R.id.select_album_single);
         stickerPanel = findViewById(R.id.sticker_panel);
+        ivPanel = findViewById(R.id.iv_panel);
 
 
         //等待StickerView初始化完成再添加bitmap;
@@ -81,8 +79,6 @@ public class CustomPuzzleActivity extends BaseActivity {
                                     addBitImage(path);
                                 }
                             }, 200);
-
-                            Log.d("============", path);
                         }
 
                         stickerPanel.getViewTreeObserver().removeGlobalOnLayoutListener(this);
@@ -139,7 +135,6 @@ public class CustomPuzzleActivity extends BaseActivity {
                     //获取单选的返回数据
                     ArrayList<Photo> resultPhotos = data.getParcelableArrayListExtra(EasyPhotos.RESULT_PHOTOS);
                     String path = resultPhotos.get(0).path;
-                    Log.d("============", path);
                     addBitImage(path);
                     break;
                 }
@@ -194,7 +189,7 @@ public class CustomPuzzleActivity extends BaseActivity {
             mSaveTask.cancel(true);
         }
         mSaveTask = new SaveStickersTask(this);
-        bitmap = getViewBitmap(stickerPanel);
+        bitmap = getViewBitmap(ivPanel);
         mSaveTask.execute(bitmap);
     }
 }

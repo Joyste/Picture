@@ -42,4 +42,6 @@
 
     <!--状态栏-->
     <color name="easy_photos_status_bar">#FFFFFF</color>//#ffffff
+
+    <color name="encode_view">#ffffffff</color>
 </resources>

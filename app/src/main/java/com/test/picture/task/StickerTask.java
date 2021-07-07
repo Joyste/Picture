@@ -1,4 +1,4 @@
-package com.test.picture.view.task;
+package com.test.picture.task;
 
 import android.annotation.TargetApi;
 import android.app.Dialog;
@@ -10,7 +10,6 @@ import android.os.Build;
 
 import com.test.picture.view.activity.CustomPuzzleActivity;
 import com.xinlan.imageeditlibrary.R;
-import com.xinlan.imageeditlibrary.editimage.EditImageActivity;
 import com.xinlan.imageeditlibrary.editimage.utils.Matrix3;
 
 /**
