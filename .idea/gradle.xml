@@ -13,6 +13,7 @@
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/imageeditlibrary" />
+            <option value="$PROJECT_DIR$/magicfilter" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />

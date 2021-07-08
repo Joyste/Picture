@@ -1,3 +1,4 @@
 rootProject.name = "Picture"
 include ':app'
 include ':imageeditlibrary'
+include ':magicfilter'

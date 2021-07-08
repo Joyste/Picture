@@ -1,22 +1,67 @@
 package com.test.picture.view.activity;
 
+import android.Manifest;
+import android.animation.Animator;
+import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
+import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.view.TextureView;
+import android.os.Environment;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.PermissionChecker;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+
+import com.huantansheng.easyphotos.EasyPhotos;
+import com.seu.magicfilter.MagicEngine;
+import com.seu.magicfilter.filter.helper.MagicFilterType;
+import com.seu.magicfilter.helper.SavePictureTask;
+import com.seu.magicfilter.utils.MagicParams;
+import com.seu.magicfilter.widget.MagicCameraView;
 import com.test.picture.R;
-import com.test.picture.utils.BrightnessUtil;
+import com.test.picture.adapter.FilterAdapter;
+import com.test.picture.utils.FileUtils;
 
+import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
+import static com.xinlan.imageeditlibrary.editimage.utils.BitmapUtils.getViewBitmap;
+
+/**
+ * Created by why8222 on 2016/3/17.
+ */
 public class CameraActivity extends BaseActivity {
+    private LinearLayout mFilterLayout;
+    private RecyclerView mFilterListView;
+    private FilterAdapter mAdapter;
+    private MagicEngine magicEngine;
+    private MagicCameraView cameraView;
+    private boolean isRecording = false;
+    private final int MODE_PIC = 1;
+    private final int MODE_VIDEO = 2;
+    private int mode = MODE_PIC;
 
+    private ImageView btn_shutter;
+    private ImageView btn_mode;
+
+    private ObjectAnimator animator;
 
     /**
      * 延时秒数
@@ -40,22 +85,60 @@ public class CameraActivity extends BaseActivity {
     private static final int DELAY_TEN = 10;
 
     private int DELAY_NUMBER = 0;
-
-    private CameraActivityHelper cameraActivityHelper;
-    private TextureView textureView;
-    private ImageButton btnTakePicture;
-    private ImageView ivExchangeCamera;
     private Button btnDelay;
     private TextView txtDelayTime;
 
+
+    private final MagicFilterType[] types = new MagicFilterType[]{
+            MagicFilterType.NONE,
+            MagicFilterType.FAIRYTALE,
+            MagicFilterType.SUNRISE,
+            MagicFilterType.SUNSET,
+            MagicFilterType.WHITECAT,
+            MagicFilterType.BLACKCAT,
+            MagicFilterType.SKINWHITEN,
+            MagicFilterType.HEALTHY,
+            MagicFilterType.SWEETS,
+            MagicFilterType.ROMANCE,
+            MagicFilterType.SAKURA,
+            MagicFilterType.WARM,
+            MagicFilterType.ANTIQUE,
+            MagicFilterType.NOSTALGIA,
+            MagicFilterType.CALM,
+            MagicFilterType.LATTE,
+            MagicFilterType.TENDER,
+            MagicFilterType.COOL,
+            MagicFilterType.EMERALD,
+            MagicFilterType.EVERGREEN,
+            MagicFilterType.CRAYON,
+            MagicFilterType.SKETCH,
+            MagicFilterType.AMARO,
+            MagicFilterType.BRANNAN,
+            MagicFilterType.BROOKLYN,
+            MagicFilterType.EARLYBIRD,
+            MagicFilterType.FREUD,
+            MagicFilterType.HEFE,
+            MagicFilterType.HUDSON,
+            MagicFilterType.INKWELL,
+            MagicFilterType.KEVIN,
+            MagicFilterType.LOMO,
+            MagicFilterType.N1977,
+            MagicFilterType.NASHVILLE,
+            MagicFilterType.PIXAR,
+            MagicFilterType.RISE,
+            MagicFilterType.SIERRA,
+            MagicFilterType.SUTRO,
+            MagicFilterType.TOASTER2,
+            MagicFilterType.VALENCIA,
+            MagicFilterType.WALDEN,
+            MagicFilterType.XPROII
+    };
+
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        getWindow().setFlags(
-                WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED,
-                WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED);//硬件加速
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);//保持常亮
-        setFullScreen(true);
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        MagicEngine.Builder builder = new MagicEngine.Builder();
+        magicEngine = builder.build((MagicCameraView) findViewById(R.id.glsurfaceview_camera));
     }
 
     @Override
@@ -63,90 +146,79 @@ public class CameraActivity extends BaseActivity {
         return R.layout.activity_camera;
     }
 
-    @Override
     protected void initView() {
-
-        textureView = findViewById(R.id.textureView);
-        btnTakePicture = findViewById(R.id.btnTakePic);
-        ivExchangeCamera = findViewById(R.id.ivExchange);
+        mFilterLayout = (LinearLayout) findViewById(R.id.layout_filter);
+        mFilterListView = (RecyclerView) findViewById(R.id.filter_listView);
+        btn_shutter = (ImageView) findViewById(R.id.btn_camera_shutter);
+        btn_mode = (ImageView) findViewById(R.id.btn_camera_mode);
         btnDelay = findViewById(R.id.btn_delay);
         txtDelayTime = findViewById(R.id.txt_delay_time);
-        cameraActivityHelper = new CameraActivityHelper(this, textureView);
-        initBrightness();
+
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
+        mFilterListView.setLayoutManager(linearLayoutManager);
+
+        mAdapter = new FilterAdapter(this, types);
+        mFilterListView.setAdapter(mAdapter);
+        mAdapter.setOnFilterChangeListener(onFilterChangeListener);
+
+        animator = ObjectAnimator.ofFloat(btn_shutter, "rotation", 0, 360);
+        animator.setDuration(500);
+        animator.setRepeatCount(ValueAnimator.INFINITE);
+        Point screenSize = new Point();
+        getWindowManager().getDefaultDisplay().getSize(screenSize);
+        cameraView = (MagicCameraView) findViewById(R.id.glsurfaceview_camera);
+        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) cameraView.getLayoutParams();
+        params.width = screenSize.x;
+        params.height = screenSize.x * 4 / 3;
+        cameraView.setLayoutParams(params);
     }
 
     @Override
     protected void initListeners() {
-        btnTakePicture.setOnClickListener(this);
-        ivExchangeCamera.setOnClickListener(this);
+        findViewById(R.id.btn_camera_filter).setOnClickListener(this);
+        findViewById(R.id.btn_camera_closefilter).setOnClickListener(this);
+        findViewById(R.id.btn_camera_shutter).setOnClickListener(this);
+        findViewById(R.id.btn_camera_switch).setOnClickListener(this);
+        findViewById(R.id.btn_camera_mode).setOnClickListener(this);
+        findViewById(R.id.btn_camera_beauty).setOnClickListener(this);
         btnDelay.setOnClickListener(this);
-
     }
+
+    private FilterAdapter.onFilterChangeListener onFilterChangeListener = new FilterAdapter.onFilterChangeListener() {
+
+        @Override
+        public void onFilterChanged(MagicFilterType filterType) {
+            magicEngine.setFilter(filterType);
+        }
+    };
 
     @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.btnTakePic:{
-                takePicture();
-                break;
-            }
-            case R.id.ivExchange: {
-                cameraActivityHelper.exchangeCamera();
-                break;
-            }
-            case R.id.btn_delay:{
-                delayTake();
-                break;
-            }
+    public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                                           int[] grantResults) {
+        if (grantResults.length != 1 || grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            if (mode == MODE_PIC)
+                takePhoto();
+            else
+                takeVideo();
+        } else {
+            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
     }
 
-    /**
-     * 初始化屏幕亮度，不到200自动调整到200
-     */
-    private void initBrightness() {
-        int brightness = BrightnessUtil.getScreenBrightness(this);
-        if (brightness < 200) {
-            BrightnessUtil.setBrightness(this, 200);
+    private void switchMode() {
+        if (mode == MODE_PIC) {
+            mode = MODE_VIDEO;
+            btn_mode.setImageResource(R.drawable.icon_camera);
+        } else {
+            mode = MODE_PIC;
+            btn_mode.setImageResource(R.drawable.icon_video);
         }
     }
 
-    /**
-     * 延时拍摄
-     */
-    private void delayTake() {
-        DELAY_NUMBER += 1;
-        switch (DELAY_NUMBER % 4) {
-            case 0:{
-                mDelayTime = DELAY_ZERO;
-                break;
-            }
-
-            case 1:{
-                mDelayTime = DELAY_THREE;
-                break;
-            }
-
-            case 2:{
-                mDelayTime = DELAY_FIVE;
-                break;
-            }
-
-            case 3:{
-                mDelayTime = DELAY_TEN;
-                break;
-            }
-
-        }
-        btnDelay.setText(mDelayTime + R.string.second);
-    }
-
-    /**
-     * 拍照＋判定延时
-     */
-    private void takePicture() {
+    private void takePhoto() {
         //设置拍照按键不可点
-        btnTakePicture.setOnClickListener(null);
+        findViewById(R.id.btn_camera_shutter).setOnClickListener(null);
 
         if (mDelayTime != DELAY_ZERO) {
             // 定时器
@@ -161,29 +233,203 @@ public class CameraActivity extends BaseActivity {
                 @Override
                 public void onFinish() {
                     txtDelayTime.setVisibility(View.GONE);
-                    cameraActivityHelper.takePic();
+                    magicEngine.savePicture(getOutputMediaFile(), new SavePictureTask.OnPictureSaveListener() {
+                        @Override
+                        public void onSaved(String result) {
+                            //显示结果
+                            Bundle bundle = new Bundle();
+                            bundle.putString("path", result);
+                            startActivity(ShowResultActivity.class, bundle);
+                        }
+                    });
+
+
                 }
             }.start();
         } else {
-            cameraActivityHelper.takePic();
+            magicEngine.savePicture(getOutputMediaFile(), new SavePictureTask.OnPictureSaveListener() {
+                @Override
+                public void onSaved(String result) {
+                    //显示结果
+                    Bundle bundle = new Bundle();
+                    bundle.putString("path", result);
+                    startActivity(ShowResultActivity.class, bundle);
+                }
+            });
+        }
+
+        findViewById(R.id.btn_camera_shutter).setOnClickListener(this);
+
+    }
+
+    private void takeVideo() {
+        if (isRecording) {
+            animator.end();
+            magicEngine.stopRecord();
+        } else {
+            animator.start();
+            magicEngine.startRecord();
+        }
+        isRecording = !isRecording;
+    }
+
+    private void showFilters() {
+        ObjectAnimator animator = ObjectAnimator.ofFloat(mFilterLayout, "translationY", mFilterLayout.getHeight(), 0);
+        animator.setDuration(200);
+        animator.addListener(new Animator.AnimatorListener() {
+
+            @Override
+            public void onAnimationStart(Animator animation) {
+                findViewById(R.id.btn_camera_shutter).setClickable(false);
+                mFilterLayout.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+
+            }
+        });
+        animator.start();
+    }
+
+    private void hideFilters() {
+        ObjectAnimator animator = ObjectAnimator.ofFloat(mFilterLayout, "translationY", 0, mFilterLayout.getHeight());
+        animator.setDuration(200);
+        animator.addListener(new Animator.AnimatorListener() {
+
+            @Override
+            public void onAnimationStart(Animator animation) {
+                // TODO Auto-generated method stub
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animation) {
+                // TODO Auto-generated method stub
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                // TODO Auto-generated method stub
+                mFilterLayout.setVisibility(View.INVISIBLE);
+                findViewById(R.id.btn_camera_shutter).setClickable(true);
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+                // TODO Auto-generated method stub
+                mFilterLayout.setVisibility(View.INVISIBLE);
+                findViewById(R.id.btn_camera_shutter).setClickable(true);
+            }
+        });
+        animator.start();
+    }
+
+    public File getOutputMediaFile() {
+        File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_PICTURES), "Picture");
+        if (!mediaStorageDir.exists()) {
+            if (!mediaStorageDir.mkdirs()) {
+                return null;
+            }
+        }
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.CHINESE).format(new Date());
+        File mediaFile = new File(mediaStorageDir.getPath() + File.separator +
+                "IMG_" + timeStamp + ".jpg");
+
+        return mediaFile;
+    }
+
+    @SuppressLint("WrongConstant")
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.btn_camera_mode: {
+                switchMode();
+                break;
+            }
+            case R.id.btn_camera_shutter: {
+                if (PermissionChecker.checkSelfPermission(CameraActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                        == PackageManager.PERMISSION_DENIED) {
+                    ActivityCompat.requestPermissions(CameraActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                            v.getId());
+                } else {
+                    if (mode == MODE_PIC)
+                        takePhoto();
+                    else
+                        takeVideo();
+                }
+                break;
+            }
+            case R.id.btn_camera_filter: {
+                showFilters();
+                break;
+            }
+            case R.id.btn_camera_switch: {
+                magicEngine.switchCamera();
+                break;
+            }
+            case R.id.btn_camera_beauty:{
+                new AlertDialog.Builder(CameraActivity.this)
+                        .setSingleChoiceItems(new String[]{"关闭", "1", "2", "3", "4", "5"}, MagicParams.beautyLevel,
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        magicEngine.setBeautyLevel(which);
+                                        dialog.dismiss();
+                                    }
+                                })
+                        .setNegativeButton("取消", null)
+                        .show();
+                break;
+            }
+            case R.id.btn_camera_closefilter:{
+                hideFilters();
+                break;
+            }
+            case R.id.btn_delay: {
+                delayTake();
+                break;
+            }
         }
     }
 
+    /**
+     * 延时拍摄
+     */
+    private void delayTake() {
+        DELAY_NUMBER += 1;
+        switch (DELAY_NUMBER % 4) {
+            case 0: {
+                mDelayTime = DELAY_ZERO;
+                break;
+            }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        cameraActivityHelper.releaseThread();
+            case 1: {
+                mDelayTime = DELAY_THREE;
+                break;
+            }
+
+            case 2: {
+                mDelayTime = DELAY_FIVE;
+                break;
+            }
+
+            case 3: {
+                mDelayTime = DELAY_TEN;
+                break;
+            }
+
+        }
+        btnDelay.setText(String.valueOf(mDelayTime)+"s");
     }
-
-    @Override
-    protected void onRestart() {
-        super.onRestart();
-        //重新初始化
-        cameraActivityHelper.reInitCameraInfo();
-        //恢复监听
-        initListeners();
-    }
-
-
 }

@@ -26,8 +26,12 @@
         <activity android:name=".view.activity.CustomPuzzleActivity"/>
         <activity android:name=".view.activity.TakePhotoActivity"/>
         <activity android:name=".view.activity.ShowResultActivity" />
-        <activity android:name=".view.activity.CameraActivity" />
+        <activity android:name=".view.activity.Camera2Activity" />
         <activity android:name=".view.MainActivity" />
+        <activity android:name=".view.activity.CameraActivity"
+            android:screenOrientation="portrait"
+            android:configChanges="keyboardHidden|orientation"
+            android:theme="@style/AppTheme"></activity>
         <activity
             android:name=".view.SplashActivity"
             android:theme="@style/AppTheme.FullScreen">

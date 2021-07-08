@@ -15,6 +15,7 @@ import androidx.core.content.ContextCompat;
 
 import com.huantansheng.easyphotos.EasyPhotos;
 import com.huantansheng.easyphotos.models.album.entity.Photo;
+import com.test.picture.view.activity.CameraActivity;
 import com.test.picture.view.activity.CustomPuzzleActivity;
 import com.test.picture.view.activity.TakePhotoActivity;
 import com.xinlan.imageeditlibrary.editimage.EditImageActivity;
@@ -23,12 +24,11 @@ import com.test.picture.tool.PhotoTool;
 import com.test.picture.utils.FileUtils;
 import com.test.picture.utils.ToastUtil;
 import com.test.picture.view.activity.BaseActivity;
-import com.test.picture.view.activity.CameraActivity;
+import com.test.picture.view.activity.Camera2Activity;
 import com.test.picture.view.activity.ShowResultActivity;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.List;
 
 
 public class MainActivity extends BaseActivity {
@@ -264,8 +264,8 @@ public class MainActivity extends BaseActivity {
                     new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CAMERA_CODE);
         } else {
             // 权限已经申请，直接拍照
-//            startActivity(CameraActivity.class);
-            startActivity(TakePhotoActivity.class);
+            startActivity(CameraActivity.class);
+//            startActivity(TakePhotoActivity.class);
 
         }
     }
@@ -284,7 +284,7 @@ public class MainActivity extends BaseActivity {
         if (REQUEST_CAMERA_CODE == requestCode) {
             // 权限允许
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                startActivity(CameraActivity.class);
+                startActivity(Camera2Activity.class);
             } else {
                 // 权限拒绝
                 Toast.makeText(getApplicationContext(), R.string.toast_permissions, Toast.LENGTH_SHORT).show();
