@@ -1,15 +1,22 @@
 package com.seu.magicfilter.widget;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Matrix;
+import android.graphics.Paint;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
 import android.opengl.EGL14;
 import android.opengl.GLES20;
 import android.os.Build;
 import android.util.AttributeSet;
+import android.view.Display;
+import android.view.Surface;
 import android.view.SurfaceHolder;
+import android.view.WindowManager;
 
 import androidx.annotation.RequiresApi;
 
@@ -35,6 +42,8 @@ import java.nio.IntBuffer;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
+import static com.seu.magicfilter.camera.CameraEngine.getCameraID;
+
 /**
  * Created by why8222 on 2016/2/25.
  */
@@ -57,7 +66,19 @@ public class MagicCameraView extends MagicBaseView {
     private static final int RECORDING_RESUMED = 2;
     private static TextureMovieEncoder videoEncoder = new TextureMovieEncoder();
 
+    private int mOrientation;
+
     private File outputFile;
+    private int mSensorRotation;
+
+    public int getmSensorRotation() {
+        return mSensorRotation;
+    }
+
+    public void setmSensorRotation(int mSensorRotation) {
+        this.mSensorRotation = mSensorRotation;
+    }
+
 
     public MagicCameraView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -165,8 +186,12 @@ public class MagicCameraView extends MagicBaseView {
     }
 
     private void openCamera(){
-        if(CameraEngine.getCamera() == null)
-            CameraEngine.openCamera();
+        if(CameraEngine.getCamera() == null){
+            CameraEngine.openCamera(0);
+//            if(getCameraID() == 1){
+//                switchCamera();
+//            }
+        }
         CameraInfo info = CameraEngine.getCameraInfo();
         if(info.orientation == 90 || info.orientation == 270){
             imageWidth = info.previewHeight;
@@ -210,16 +235,74 @@ public class MagicCameraView extends MagicBaseView {
                 queueEvent(new Runnable() {
                     @Override
                     public void run() {
-                        final Bitmap photo = drawPhoto(bitmap,CameraEngine.getCameraInfo().isFront);
+                        Bitmap photo = drawPhoto(bitmap,CameraEngine.getCameraInfo().isFront);
                         GLES20.glViewport(0, 0, surfaceWidth, surfaceHeight);
-                        if (photo != null)
+                        if (photo != null){
+                            Matrix matrix = new Matrix();
+                            //利用传感器获取当前屏幕方向对应角度 加上 开始预览是角度
+                            int rotation = (calculateCameraPreviewOrientation((Activity) MagicParams.context) + mSensorRotation) % 360 ;
+                            if (getCameraID() == Camera.CameraInfo.CAMERA_FACING_BACK) {
+                                //如果是后置摄像头因为没有镜面效果直接旋转特定角度
+                                matrix.setRotate(rotation);
+                            } else {
+                                //如果是前置摄像头需要做镜面操作，然后对图片做镜面postScale(-1, 1)
+                                //因为镜面效果需要360-rotation，才是前置摄像头真正的旋转角度
+                                rotation = (360 - rotation) % 360;
+                                matrix.setRotate(rotation);
+                                matrix.postScale(-1, 1);
+                            }
+                            photo = Bitmap.createBitmap(photo, 0, 0, photo.getWidth(), photo.getHeight(), matrix, true);
+
                             savePictureTask.execute(photo);
+
+                        }
                     }
                 });
                 CameraEngine.startPreview();
             }
         });
     }
+
+
+    /**
+     * 设置预览角度，setDisplayOrientation本身只能改变预览的角度
+     * previewFrameCallback以及拍摄出来的照片是不会发生改变的，拍摄出来的照片角度依旧不正常的
+     * 拍摄的照片需要自行处理
+     */
+    public  int calculateCameraPreviewOrientation(Activity context) {
+        Camera.CameraInfo info = new Camera.CameraInfo();
+        Camera.getCameraInfo(getCameraID(), info);
+        int rotation = context.getWindowManager().getDefaultDisplay()
+                .getRotation();
+        int degrees = 0;
+        switch (rotation) {
+            case Surface.ROTATION_0:
+                degrees = 0;
+                break;
+            case Surface.ROTATION_90:
+                degrees = 90;
+                break;
+            case Surface.ROTATION_180:
+                degrees = 180;
+                break;
+            case Surface.ROTATION_270:
+                degrees = 270;
+                break;
+        }
+
+        int result;
+        if (info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
+            result = (info.orientation + degrees) % 360;
+            result = (360 - result) % 360;
+        } else {
+            result = (info.orientation - degrees + 360) % 360;
+        }
+        System.out.println("=======info.orientation==========="+info.orientation + degrees);
+        mOrientation = result;
+        return result;
+    }
+
+
 
     private Bitmap drawPhoto(Bitmap bitmap,boolean isRotated){
         int width = bitmap.getWidth();
@@ -236,6 +319,7 @@ public class MagicCameraView extends MagicBaseView {
             filter.onInputSizeChanged(width, height);
             filter.onDisplaySizeChanged(width, height);
         }
+
         GLES20.glGenFramebuffers(1, mFrameBuffers, 0);
         GLES20.glGenTextures(1, mFrameBufferTextures, 0);
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, mFrameBufferTextures[0]);

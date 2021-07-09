@@ -11,6 +11,9 @@ import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Point;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Environment;
@@ -29,10 +32,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.huantansheng.easyphotos.EasyPhotos;
 import com.seu.magicfilter.MagicEngine;
+import com.seu.magicfilter.camera.CameraEngine;
 import com.seu.magicfilter.filter.helper.MagicFilterType;
 import com.seu.magicfilter.helper.SavePictureTask;
 import com.seu.magicfilter.utils.MagicParams;
 import com.seu.magicfilter.widget.MagicCameraView;
+import com.seu.magicfilter.widget.base.MagicBaseView;
 import com.test.picture.R;
 import com.test.picture.adapter.FilterAdapter;
 import com.test.picture.utils.FileUtils;
@@ -42,12 +47,13 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+import static com.seu.magicfilter.camera.CameraEngine.releaseCamera;
 import static com.xinlan.imageeditlibrary.editimage.utils.BitmapUtils.getViewBitmap;
 
 /**
  * Created by why8222 on 2016/3/17.
  */
-public class CameraActivity extends BaseActivity {
+public class CameraActivity extends BaseActivity implements SensorEventListener {
     private LinearLayout mFilterLayout;
     private RecyclerView mFilterListView;
     private FilterAdapter mAdapter;
@@ -62,6 +68,7 @@ public class CameraActivity extends BaseActivity {
     private ImageView btn_mode;
 
     private ObjectAnimator animator;
+    private int mSensorRotation;
 
     /**
      * 延时秒数
@@ -233,33 +240,30 @@ public class CameraActivity extends BaseActivity {
                 @Override
                 public void onFinish() {
                     txtDelayTime.setVisibility(View.GONE);
-                    magicEngine.savePicture(getOutputMediaFile(), new SavePictureTask.OnPictureSaveListener() {
-                        @Override
-                        public void onSaved(String result) {
-                            //显示结果
-                            Bundle bundle = new Bundle();
-                            bundle.putString("path", result);
-                            startActivity(ShowResultActivity.class, bundle);
-                        }
-                    });
-
-
+                    showResult();
                 }
             }.start();
         } else {
-            magicEngine.savePicture(getOutputMediaFile(), new SavePictureTask.OnPictureSaveListener() {
-                @Override
-                public void onSaved(String result) {
-                    //显示结果
-                    Bundle bundle = new Bundle();
-                    bundle.putString("path", result);
-                    startActivity(ShowResultActivity.class, bundle);
-                }
-            });
+            showResult();
         }
 
         findViewById(R.id.btn_camera_shutter).setOnClickListener(this);
 
+    }
+
+    /**
+     * 显示结果
+     */
+    private void showResult(){
+        magicEngine.savePicture(getOutputMediaFile(), new SavePictureTask.OnPictureSaveListener() {
+            @Override
+            public void onSaved(String result) {
+                //显示结果
+                Bundle bundle = new Bundle();
+                bundle.putString("path", result);
+                startActivity(ShowResultActivity.class, bundle);
+            }
+        });
     }
 
     private void takeVideo() {
@@ -432,4 +436,65 @@ public class CameraActivity extends BaseActivity {
         }
         btnDelay.setText(String.valueOf(mDelayTime)+"s");
     }
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+    }
+
+
+
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+        //手机移动一段时间后静止，然后静止一段时间后进行对焦
+        // 读取加速度传感器数值，values数组0,1,2分别对应x,y,z轴的加速度
+        if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
+            int x = (int) event.values[0];
+            int y = (int) event.values[1];
+            int z = (int) event.values[2];
+
+        }
+
+        mSensorRotation = calculateSensorRotation(event.values[0],event.values[1]);
+        cameraView.setmSensorRotation(mSensorRotation);
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+
+    }
+
+
+    public  int calculateSensorRotation(float x, float y) {
+        //x是values[0]的值，X轴方向加速度，从左侧向右侧移动，values[0]为负值；从右向左移动，values[0]为正值
+        //y是values[1]的值，Y轴方向加速度，从上到下移动，values[1]为负值；从下往上移动，values[1]为正值
+        //不考虑Z轴上的数据，
+        if (Math.abs(x) > 6 && Math.abs(y) < 4) {
+            if (x > 6) {
+                return 270;
+            } else {
+                return 90;
+            }
+        } else if (Math.abs(y) > 6 && Math.abs(x) < 4) {
+            if (y > 6) {
+                return 0;
+            } else {
+                return 180;
+            }
+        }
+
+        return -1;
+    }
+
 }

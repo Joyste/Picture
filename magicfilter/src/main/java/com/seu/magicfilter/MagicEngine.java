@@ -75,6 +75,5 @@ public class MagicEngine {
             MagicParams.videoName = name;
             return this;
         }
-
     }
 }

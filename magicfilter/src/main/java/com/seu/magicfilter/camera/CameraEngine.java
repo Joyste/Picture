@@ -7,6 +7,7 @@ import android.hardware.Camera;
 import android.hardware.Camera.CameraInfo;
 import android.hardware.Camera.Parameters;
 import android.hardware.Camera.Size;
+import android.view.Surface;
 import android.view.SurfaceView;
 
 import com.seu.magicfilter.camera.utils.CameraUtils;
@@ -16,6 +17,14 @@ public class CameraEngine {
     private static int cameraID = 0;
     private static SurfaceTexture surfaceTexture;
     private static SurfaceView surfaceView;
+
+    public static void setCamera(Camera camera) {
+        CameraEngine.camera = camera;
+    }
+
+    public static int getCameraID() {
+        return cameraID;
+    }
 
     public static Camera getCamera(){
         return camera;
@@ -115,6 +124,7 @@ public class CameraEngine {
         if(camera != null)
             camera.startPreview();
     }
+
 
     public static void stopPreview(){
         camera.stopPreview();
