@@ -2,6 +2,7 @@ package com.seu.magicfilter.camera;
 
 import java.io.IOException;
 
+import android.app.Activity;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
 import android.hardware.Camera.CameraInfo;
@@ -11,6 +12,9 @@ import android.view.Surface;
 import android.view.SurfaceView;
 
 import com.seu.magicfilter.camera.utils.CameraUtils;
+import com.seu.magicfilter.utils.MagicParams;
+
+import static com.seu.magicfilter.widget.MagicCameraView.calculateCameraPreviewOrientation;
 
 public class CameraEngine {
     private static Camera camera = null;

@@ -1,25 +1,31 @@
 package com.seu.magicfilter.widget;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.Point;
+import android.graphics.Rect;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
 import android.opengl.EGL14;
 import android.opengl.GLES20;
 import android.os.Build;
 import android.util.AttributeSet;
-import android.view.Display;
+import android.view.MotionEvent;
 import android.view.Surface;
 import android.view.SurfaceHolder;
-import android.view.WindowManager;
+import android.view.View;
+import android.widget.ImageView;
 
 import androidx.annotation.RequiresApi;
 
+import com.seu.magicfilter.R;
 import com.seu.magicfilter.camera.CameraEngine;
 import com.seu.magicfilter.camera.utils.CameraInfo;
 import com.seu.magicfilter.encoder.video.TextureMovieEncoder;
@@ -38,9 +44,12 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
+
 
 import static com.seu.magicfilter.camera.CameraEngine.getCameraID;
 
@@ -66,7 +75,6 @@ public class MagicCameraView extends MagicBaseView {
     private static final int RECORDING_RESUMED = 2;
     private static TextureMovieEncoder videoEncoder = new TextureMovieEncoder();
 
-    private int mOrientation;
 
     private File outputFile;
     private int mSensorRotation;
@@ -83,7 +91,7 @@ public class MagicCameraView extends MagicBaseView {
     public MagicCameraView(Context context, AttributeSet attrs) {
         super(context, attrs);
         this.getHolder().addCallback(this);
-        outputFile = new File(MagicParams.videoPath,MagicParams.videoName);
+        outputFile = new File(MagicParams.videoPath, MagicParams.videoName);
         recordingStatus = -1;
         recordingEnabled = false;
         scaleType = ScaleType.CENTER_CROP;
@@ -97,7 +105,7 @@ public class MagicCameraView extends MagicBaseView {
             recordingStatus = RECORDING_RESUMED;
         else
             recordingStatus = RECORDING_OFF;
-        if(cameraInputFilter == null)
+        if (cameraInputFilter == null)
             cameraInputFilter = new MagicCameraInputFilter();
         cameraInputFilter.init();
         if (textureId == OpenGlUtils.NO_TEXTURE) {
@@ -119,7 +127,7 @@ public class MagicCameraView extends MagicBaseView {
     @Override
     public void onDrawFrame(GL10 gl) {
         super.onDrawFrame(gl);
-        if(surfaceTexture == null)
+        if (surfaceTexture == null)
             return;
         surfaceTexture.updateTexImage();
         if (recordingEnabled) {
@@ -161,9 +169,9 @@ public class MagicCameraView extends MagicBaseView {
         surfaceTexture.getTransformMatrix(mtx);
         cameraInputFilter.setTextureTransformMatrix(mtx);
         int id = textureId;
-        if(filter == null){
+        if (filter == null) {
             cameraInputFilter.onDrawFrame(textureId, gLCubeBuffer, gLTextureBuffer);
-        }else{
+        } else {
             id = cameraInputFilter.onDrawToTexture(textureId);
             filter.onDrawFrame(id, gLCubeBuffer, gLTextureBuffer);
         }
@@ -185,24 +193,21 @@ public class MagicCameraView extends MagicBaseView {
         videoEncoder.setFilter(type);
     }
 
-    private void openCamera(){
-        if(CameraEngine.getCamera() == null){
+    private void openCamera() {
+        if (CameraEngine.getCamera() == null) {
             CameraEngine.openCamera(0);
-//            if(getCameraID() == 1){
-//                switchCamera();
-//            }
         }
         CameraInfo info = CameraEngine.getCameraInfo();
-        if(info.orientation == 90 || info.orientation == 270){
+        if (info.orientation == 90 || info.orientation == 270) {
             imageWidth = info.previewHeight;
             imageHeight = info.previewWidth;
-        }else{
+        } else {
             imageWidth = info.previewWidth;
             imageHeight = info.previewHeight;
         }
         cameraInputFilter.onInputSizeChanged(imageWidth, imageHeight);
         adjustSize(info.orientation, info.isFront, true);
-        if(surfaceTexture != null)
+        if (surfaceTexture != null)
             CameraEngine.startPreview(surfaceTexture);
     }
 
@@ -216,10 +221,10 @@ public class MagicCameraView extends MagicBaseView {
         recordingEnabled = isRecording;
     }
 
-    protected void onFilterChanged(){
+    protected void onFilterChanged() {
         super.onFilterChanged();
         cameraInputFilter.onDisplaySizeChanged(surfaceWidth, surfaceHeight);
-        if(filter != null)
+        if (filter != null)
             cameraInputFilter.initCameraFrameBuffer(imageWidth, imageHeight);
         else
             cameraInputFilter.destroyFramebuffers();
@@ -235,21 +240,21 @@ public class MagicCameraView extends MagicBaseView {
                 queueEvent(new Runnable() {
                     @Override
                     public void run() {
-                        Bitmap photo = drawPhoto(bitmap,CameraEngine.getCameraInfo().isFront);
+                        Bitmap photo = drawPhoto(bitmap, CameraEngine.getCameraInfo().isFront);
                         GLES20.glViewport(0, 0, surfaceWidth, surfaceHeight);
-                        if (photo != null){
+                        if (photo != null) {
+
                             Matrix matrix = new Matrix();
                             //利用传感器获取当前屏幕方向对应角度 加上 开始预览是角度
-                            int rotation = (calculateCameraPreviewOrientation((Activity) MagicParams.context) + mSensorRotation) % 360 ;
+                            int rotation = (calculateCameraPreviewOrientation((Activity) MagicParams.context) + mSensorRotation) % 360;
                             if (getCameraID() == Camera.CameraInfo.CAMERA_FACING_BACK) {
                                 //如果是后置摄像头因为没有镜面效果直接旋转特定角度
                                 matrix.setRotate(rotation);
                             } else {
                                 //如果是前置摄像头需要做镜面操作，然后对图片做镜面postScale(-1, 1)
                                 //因为镜面效果需要360-rotation，才是前置摄像头真正的旋转角度
-                                rotation = (360 - rotation) % 360;
+                                rotation = (rotation + 180) % 360;
                                 matrix.setRotate(rotation);
-                                matrix.postScale(-1, 1);
                             }
                             photo = Bitmap.createBitmap(photo, 0, 0, photo.getWidth(), photo.getHeight(), matrix, true);
 
@@ -269,11 +274,10 @@ public class MagicCameraView extends MagicBaseView {
      * previewFrameCallback以及拍摄出来的照片是不会发生改变的，拍摄出来的照片角度依旧不正常的
      * 拍摄的照片需要自行处理
      */
-    public  int calculateCameraPreviewOrientation(Activity context) {
+    public static int calculateCameraPreviewOrientation(Activity context) {
         Camera.CameraInfo info = new Camera.CameraInfo();
         Camera.getCameraInfo(getCameraID(), info);
-        int rotation = context.getWindowManager().getDefaultDisplay()
-                .getRotation();
+        int rotation = context.getWindowManager().getDefaultDisplay().getRotation();
         int degrees = 0;
         switch (rotation) {
             case Surface.ROTATION_0:
@@ -297,25 +301,21 @@ public class MagicCameraView extends MagicBaseView {
         } else {
             result = (info.orientation - degrees + 360) % 360;
         }
-        System.out.println("=======info.orientation==========="+info.orientation + degrees);
-        mOrientation = result;
         return result;
     }
 
-
-
-    private Bitmap drawPhoto(Bitmap bitmap,boolean isRotated){
+    private Bitmap drawPhoto(Bitmap bitmap, boolean isRotated) {
         int width = bitmap.getWidth();
         int height = bitmap.getHeight();
         int[] mFrameBuffers = new int[1];
         int[] mFrameBufferTextures = new int[1];
-        if(beautyFilter == null)
+        if (beautyFilter == null)
             beautyFilter = new MagicBeautyFilter();
         beautyFilter.init();
         beautyFilter.onDisplaySizeChanged(width, height);
         beautyFilter.onInputSizeChanged(width, height);
 
-        if(filter != null) {
+        if (filter != null) {
             filter.onInputSizeChanged(width, height);
             filter.onDisplaySizeChanged(width, height);
         }
@@ -347,15 +347,15 @@ public class MagicCameraView extends MagicBaseView {
                 .order(ByteOrder.nativeOrder())
                 .asFloatBuffer();
         gLCubeBuffer.put(TextureRotationUtil.CUBE).position(0);
-        if(isRotated)
+        if (isRotated)
             gLTextureBuffer.put(TextureRotationUtil.getRotation(Rotation.NORMAL, false, false)).position(0);
         else
             gLTextureBuffer.put(TextureRotationUtil.getRotation(Rotation.NORMAL, false, true)).position(0);
 
 
-        if(filter == null){
+        if (filter == null) {
             beautyFilter.onDrawFrame(textureId, gLCubeBuffer, gLTextureBuffer);
-        }else{
+        } else {
             beautyFilter.onDrawFrame(textureId);
             filter.onDrawFrame(mFrameBufferTextures[0], gLCubeBuffer, gLTextureBuffer);
         }
@@ -371,7 +371,7 @@ public class MagicCameraView extends MagicBaseView {
 
         beautyFilter.destroy();
         beautyFilter = null;
-        if(filter != null) {
+        if (filter != null) {
             filter.onDisplaySizeChanged(surfaceWidth, surfaceHeight);
             filter.onInputSizeChanged(imageWidth, imageHeight);
         }
@@ -381,4 +381,5 @@ public class MagicCameraView extends MagicBaseView {
     public void onBeautyLevelChanged() {
         cameraInputFilter.onBeautyLevelChanged();
     }
+
 }

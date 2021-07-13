@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,11 +20,10 @@ import com.xinlan.imageeditlibrary.R;
 import com.xinlan.imageeditlibrary.editimage.EditImageActivity;
 import com.xinlan.imageeditlibrary.editimage.ModuleConfig;
 import com.xinlan.imageeditlibrary.editimage.adapter.ToneListAdapter;
-import com.xinlan.imageeditlibrary.editimage.model.ToneItem;
+import com.xinlan.imageeditlibrary.editimage.model.appInfo;
 import com.xinlan.imageeditlibrary.editimage.utils.PhotoEnhance;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class ToneFragment extends BaseEditFragment implements View.OnClickListener {
@@ -38,7 +36,7 @@ public class ToneFragment extends BaseEditFragment implements View.OnClickListen
     private SeekBar mToneSeekBar;//色值列表View
     private TextView seekbarValue;
     private ToneListAdapter mToneListAdapter;
-    private List<ToneItem> dataList = new ArrayList<>();
+    private List<appInfo> dataList = new ArrayList<>();
 
 
     private PopupWindow setToneValueWindow;
@@ -89,11 +87,11 @@ public class ToneFragment extends BaseEditFragment implements View.OnClickListen
      * 初始化Item数据
      */
     private void initData() {
-        dataList.add(new ToneItem(R.drawable.crop_normal, R.string.luminance, MID_VALUE));//亮度
-        dataList.add(new ToneItem(R.drawable.crop_normal, R.string.contrast, MID_VALUE));//对比度
-        dataList.add(new ToneItem(R.drawable.crop_normal, R.string.saturation, MID_VALUE));//饱和度
-        dataList.add(new ToneItem(R.drawable.crop_normal, R.string.hue, MID_VALUE));//色相
-        dataList.add(new ToneItem(R.drawable.crop_normal, R.string.exposure, MID_VALUE));//曝光
+        dataList.add(new appInfo(R.drawable.crop_normal, R.string.luminance, MID_VALUE));//亮度
+        dataList.add(new appInfo(R.drawable.crop_normal, R.string.contrast, MID_VALUE));//对比度
+        dataList.add(new appInfo(R.drawable.crop_normal, R.string.saturation, MID_VALUE));//饱和度
+        dataList.add(new appInfo(R.drawable.crop_normal, R.string.hue, MID_VALUE));//色相
+        dataList.add(new appInfo(R.drawable.crop_normal, R.string.exposure, MID_VALUE));//曝光
         mPhotoEnhance = new PhotoEnhance();
         mPhotoEnhance.setBitmap(editBitmap);
         mProgress = MID_VALUE;

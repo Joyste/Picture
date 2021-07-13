@@ -5,18 +5,20 @@ import android.animation.Animator;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
+import android.content.res.Configuration;
 import android.graphics.Point;
-import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Environment;
+import android.util.Log;
+import android.view.OrientationEventListener;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -30,30 +32,26 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 
-import com.huantansheng.easyphotos.EasyPhotos;
 import com.seu.magicfilter.MagicEngine;
-import com.seu.magicfilter.camera.CameraEngine;
 import com.seu.magicfilter.filter.helper.MagicFilterType;
 import com.seu.magicfilter.helper.SavePictureTask;
 import com.seu.magicfilter.utils.MagicParams;
 import com.seu.magicfilter.widget.MagicCameraView;
-import com.seu.magicfilter.widget.base.MagicBaseView;
 import com.test.picture.R;
 import com.test.picture.adapter.FilterAdapter;
-import com.test.picture.utils.FileUtils;
+
 
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-import static com.seu.magicfilter.camera.CameraEngine.releaseCamera;
-import static com.xinlan.imageeditlibrary.editimage.utils.BitmapUtils.getViewBitmap;
+import static com.test.picture.MyApp.getContext;
 
 /**
  * Created by why8222 on 2016/3/17.
  */
-public class CameraActivity extends BaseActivity implements SensorEventListener {
+public class CameraActivity extends BaseActivity {
     private LinearLayout mFilterLayout;
     private RecyclerView mFilterListView;
     private FilterAdapter mAdapter;
@@ -69,6 +67,14 @@ public class CameraActivity extends BaseActivity implements SensorEventListener 
 
     private ObjectAnimator animator;
     private int mSensorRotation;
+    private OrientationEventListener mOrientationListener;
+    private TextView line1;
+    private TextView line2;
+    private TextView line3;
+    private TextView line4;
+    private Button btnSubline;
+    private boolean isOpenSubline = true;
+
 
     /**
      * 延时秒数
@@ -160,6 +166,11 @@ public class CameraActivity extends BaseActivity implements SensorEventListener 
         btn_mode = (ImageView) findViewById(R.id.btn_camera_mode);
         btnDelay = findViewById(R.id.btn_delay);
         txtDelayTime = findViewById(R.id.txt_delay_time);
+        line1 = findViewById(R.id.line1);
+        line2 = findViewById(R.id.line2);
+        line3 = findViewById(R.id.line3);
+        line4 = findViewById(R.id.line4);
+        btnSubline = findViewById(R.id.btn_subline);
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
@@ -183,13 +194,47 @@ public class CameraActivity extends BaseActivity implements SensorEventListener 
 
     @Override
     protected void initListeners() {
-        findViewById(R.id.btn_camera_filter).setOnClickListener(this);
-        findViewById(R.id.btn_camera_closefilter).setOnClickListener(this);
-        findViewById(R.id.btn_camera_shutter).setOnClickListener(this);
-        findViewById(R.id.btn_camera_switch).setOnClickListener(this);
-        findViewById(R.id.btn_camera_mode).setOnClickListener(this);
-        findViewById(R.id.btn_camera_beauty).setOnClickListener(this);
-        btnDelay.setOnClickListener(this);
+        findViewById(R.id.btn_camera_filter).setOnClickListener(listener);
+        findViewById(R.id.btn_camera_closefilter).setOnClickListener(listener);
+        findViewById(R.id.btn_camera_shutter).setOnClickListener(listener);
+        findViewById(R.id.btn_camera_switch).setOnClickListener(listener);
+        findViewById(R.id.btn_camera_mode).setOnClickListener(listener);
+        findViewById(R.id.btn_camera_beauty).setOnClickListener(listener);
+        btnDelay.setOnClickListener(listener);
+        btnSubline.setOnClickListener(listener);
+
+        mOrientationListener = new OrientationEventListener(this,
+                SensorManager.SENSOR_DELAY_NORMAL) {
+
+            @Override
+            public void onOrientationChanged(int orientation) {
+                if (orientation == OrientationEventListener.ORIENTATION_UNKNOWN) {
+                    return;  //手机平放时，检测不到有效的角度
+                }
+//只检测是否有四个角度的改变
+                if (orientation > 350 || orientation < 10) { //0度
+                    orientation = 0;
+                } else if (orientation > 80 && orientation < 100) { //90度
+                    orientation = 90;
+                } else if (orientation > 170 && orientation < 190) { //180度
+                    orientation = 180;
+                } else if (orientation > 260 && orientation < 280) { //270度
+                    orientation = 270;
+                } else {
+                    return;
+                }
+                Log.i("MyOrientationDetector ", "onOrientationChanged:" + orientation);
+
+                cameraView.setmSensorRotation(orientation);
+            }
+        };
+
+        if (mOrientationListener.canDetectOrientation()) {
+            mOrientationListener.enable();
+        } else {
+            mOrientationListener.disable();
+        }
+
     }
 
     private FilterAdapter.onFilterChangeListener onFilterChangeListener = new FilterAdapter.onFilterChangeListener() {
@@ -204,10 +249,10 @@ public class CameraActivity extends BaseActivity implements SensorEventListener 
     public void onRequestPermissionsResult(int requestCode, String[] permissions,
                                            int[] grantResults) {
         if (grantResults.length != 1 || grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            if (mode == MODE_PIC)
+            if (mode == MODE_PIC){
                 takePhoto();
-            else
-                takeVideo();
+            }
+
         } else {
             super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
@@ -224,6 +269,11 @@ public class CameraActivity extends BaseActivity implements SensorEventListener 
     }
 
     private void takePhoto() {
+        //提示音
+        Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        Ringtone r = RingtoneManager.getRingtone(getContext(), notification);
+        r.play();
+
         //设置拍照按键不可点
         findViewById(R.id.btn_camera_shutter).setOnClickListener(null);
 
@@ -246,9 +296,6 @@ public class CameraActivity extends BaseActivity implements SensorEventListener 
         } else {
             showResult();
         }
-
-        findViewById(R.id.btn_camera_shutter).setOnClickListener(this);
-
     }
 
     /**
@@ -262,6 +309,7 @@ public class CameraActivity extends BaseActivity implements SensorEventListener 
                 Bundle bundle = new Bundle();
                 bundle.putString("path", result);
                 startActivity(ShowResultActivity.class, bundle);
+                findViewById(R.id.btn_camera_shutter).setOnClickListener(listener);
             }
         });
     }
@@ -355,57 +403,87 @@ public class CameraActivity extends BaseActivity implements SensorEventListener 
     }
 
     @SuppressLint("WrongConstant")
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.btn_camera_mode: {
-                switchMode();
-                break;
-            }
-            case R.id.btn_camera_shutter: {
-                if (PermissionChecker.checkSelfPermission(CameraActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                        == PackageManager.PERMISSION_DENIED) {
-                    ActivityCompat.requestPermissions(CameraActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                            v.getId());
-                } else {
-                    if (mode == MODE_PIC)
-                        takePhoto();
-                    else
-                        takeVideo();
+    private View.OnClickListener listener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            switch (v.getId()) {
+                case R.id.btn_camera_mode: {
+                    switchMode();
+                    break;
                 }
-                break;
-            }
-            case R.id.btn_camera_filter: {
-                showFilters();
-                break;
-            }
-            case R.id.btn_camera_switch: {
-                magicEngine.switchCamera();
-                break;
-            }
-            case R.id.btn_camera_beauty:{
-                new AlertDialog.Builder(CameraActivity.this)
-                        .setSingleChoiceItems(new String[]{"关闭", "1", "2", "3", "4", "5"}, MagicParams.beautyLevel,
-                                new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        magicEngine.setBeautyLevel(which);
-                                        dialog.dismiss();
-                                    }
-                                })
-                        .setNegativeButton("取消", null)
-                        .show();
-                break;
-            }
-            case R.id.btn_camera_closefilter:{
-                hideFilters();
-                break;
-            }
-            case R.id.btn_delay: {
-                delayTake();
-                break;
+                case R.id.btn_camera_shutter: {
+                    if (PermissionChecker.checkSelfPermission(CameraActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                            == PackageManager.PERMISSION_DENIED) {
+                        ActivityCompat.requestPermissions(CameraActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                                v.getId());
+                    } else {
+                        if (mode == MODE_PIC)
+                            takePhoto();
+                        else
+                            takeVideo();
+                    }
+                    break;
+                }
+                case R.id.btn_camera_filter: {
+                    showFilters();
+                    break;
+                }
+                case R.id.btn_camera_switch: {
+                    magicEngine.switchCamera();
+                    break;
+                }
+                case R.id.btn_camera_beauty: {
+                    new AlertDialog.Builder(CameraActivity.this)
+                            .setSingleChoiceItems(new String[]{"关闭", "1级", "2级", "3级", "4级", "5级"}, MagicParams.beautyLevel,
+                                    new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            magicEngine.setBeautyLevel(which);
+                                            dialog.dismiss();
+                                        }
+                                    })
+                            .setNegativeButton("取消", null)
+                            .show();
+                    break;
+                }
+                case R.id.btn_camera_closefilter: {
+                    hideFilters();
+                    break;
+                }
+                case R.id.btn_delay: {
+                    delayTake();
+                    break;
+                }
+                case R.id.btn_subline: {
+                    switchSubline();
+                    break;
+                }
             }
         }
+
+
+    };
+
+    /**
+     * 开关辅助线
+     */
+    private void switchSubline() {
+        if(isOpenSubline){
+            line1.setVisibility(View.INVISIBLE);
+            line2.setVisibility(View.INVISIBLE);
+            line3.setVisibility(View.INVISIBLE);
+            line4.setVisibility(View.INVISIBLE);
+            isOpenSubline = false;
+            btnSubline.setText("辅助线(开)");
+        }else {
+            line1.setVisibility(View.VISIBLE);
+            line2.setVisibility(View.VISIBLE);
+            line3.setVisibility(View.VISIBLE);
+            line4.setVisibility(View.VISIBLE);
+            isOpenSubline = true;
+            btnSubline.setText("辅助线(关)");
+        }
     }
+
 
     /**
      * 延时拍摄
@@ -441,60 +519,25 @@ public class CameraActivity extends BaseActivity implements SensorEventListener 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-    }
-
-    @Override
-    protected void onRestart() {
-        super.onRestart();
+        mOrientationListener.disable();
     }
 
 
 
     @Override
-    public void onSensorChanged(SensorEvent event) {
-        //手机移动一段时间后静止，然后静止一段时间后进行对焦
-        // 读取加速度传感器数值，values数组0,1,2分别对应x,y,z轴的加速度
-        if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
-            int x = (int) event.values[0];
-            int y = (int) event.values[1];
-            int z = (int) event.values[2];
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+        // Checks the orientation of the screen
+        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+
+        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT){
 
         }
-
-        mSensorRotation = calculateSensorRotation(event.values[0],event.values[1]);
-        cameraView.setmSensorRotation(mSensorRotation);
     }
 
     @Override
-    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+    public void onClick(View v) {
 
     }
-
-
-    public  int calculateSensorRotation(float x, float y) {
-        //x是values[0]的值，X轴方向加速度，从左侧向右侧移动，values[0]为负值；从右向左移动，values[0]为正值
-        //y是values[1]的值，Y轴方向加速度，从上到下移动，values[1]为负值；从下往上移动，values[1]为正值
-        //不考虑Z轴上的数据，
-        if (Math.abs(x) > 6 && Math.abs(y) < 4) {
-            if (x > 6) {
-                return 270;
-            } else {
-                return 90;
-            }
-        } else if (Math.abs(y) > 6 && Math.abs(x) < 4) {
-            if (y > 6) {
-                return 0;
-            } else {
-                return 180;
-            }
-        }
-
-        return -1;
-    }
-
 }

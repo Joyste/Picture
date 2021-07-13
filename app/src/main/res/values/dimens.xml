@@ -19,6 +19,7 @@
     <dimen name="text30">30dp</dimen>
     <dimen name="text50">50dp</dimen>
     <dimen name="text100">100dp</dimen>
+    <dimen name="text150">150dp</dimen>
     <dimen name="nav_header_height">200dp</dimen>
     <dimen name="margin">16dp</dimen>
     <dimen name="padding">16dp</dimen>

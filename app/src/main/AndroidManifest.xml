@@ -7,6 +7,7 @@
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission
         android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS"
         tools:ignore="ProtectedPermissions" />
@@ -23,15 +24,15 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".view.activity.CustomPuzzleActivity"/>
-        <activity android:name=".view.activity.TakePhotoActivity"/>
+        <activity android:name=".view.activity.ShowProductActivity" />
+        <activity android:name=".view.activity.CustomPuzzleActivity" />
         <activity android:name=".view.activity.ShowResultActivity" />
-        <activity android:name=".view.activity.Camera2Activity" />
         <activity android:name=".view.MainActivity" />
-        <activity android:name=".view.activity.CameraActivity"
-            android:screenOrientation="portrait"
+        <activity
+            android:name=".view.activity.CameraActivity"
             android:configChanges="keyboardHidden|orientation"
-            android:theme="@style/AppTheme"></activity>
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme" />
         <activity
             android:name=".view.SplashActivity"
             android:theme="@style/AppTheme.FullScreen">
@@ -58,6 +59,10 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
         </provider>
+
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-7327353426806549~3912465637"/>
     </application>
 
 </manifest>

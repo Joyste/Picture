@@ -13,7 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.xinlan.imageeditlibrary.R;
-import com.xinlan.imageeditlibrary.editimage.model.ToneItem;
+import com.xinlan.imageeditlibrary.editimage.model.appInfo;
 
 import java.util.List;
 
@@ -22,7 +22,7 @@ import java.util.List;
  */
 public class ToneListAdapter extends RecyclerView.Adapter<ToneListAdapter.ViewHolder> {
 
-    private List<ToneItem> list;
+    private List<appInfo> list;
     private Context context;
     private OnItemClickListener listener;
 
@@ -30,7 +30,7 @@ public class ToneListAdapter extends RecyclerView.Adapter<ToneListAdapter.ViewHo
      * @param context
      * @param list
      */
-    public ToneListAdapter(Context context, List<ToneItem> list) {
+    public ToneListAdapter(Context context, List<appInfo> list) {
         this.list = list;
         this.context = context;
     }
@@ -89,11 +89,11 @@ public class ToneListAdapter extends RecyclerView.Adapter<ToneListAdapter.ViewHo
         }
     }
 
-    public List<ToneItem> getList() {
+    public List<appInfo> getList() {
         return list;
     }
 
-    public void setList(List<ToneItem> list) {
+    public void setList(List<appInfo> list) {
         this.list = list;
     }
 

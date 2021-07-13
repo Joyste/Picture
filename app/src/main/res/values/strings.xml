@@ -152,4 +152,7 @@
     <string name="filter_walden">Walden</string>
     <string name="filter_xproii">XproII</string>
 
+    <string name="application">应用</string>
+    <string name="app_new">NEW</string>
+
 </resources>
