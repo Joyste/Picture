@@ -13,7 +13,6 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 
-import com.bumptech.glide.Glide;
 import com.test.picture.R;
 import com.test.picture.model.AppInfo;
 import com.test.picture.tool.GlideEngine;
@@ -59,18 +58,17 @@ public class AppListAdapter extends RecyclerView.Adapter<AppListAdapter.ViewHold
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (listener != null) {
-                    listener.onItemClick(holder.itemView, holder.getAdapterPosition());
-                }
+//                if (listener != null) {
+//                    listener.onItemClick(holder.itemView, holder.getAdapterPosition());
+//                }
             }
         });
 
-        Uri uri = Uri.parse(list.get(position).getApp_img());
+        Uri uri = Uri.parse(list.get(position).getIcoUrl());
         GlideEngine.getInstance().loadPhoto(context,uri,holder.ivAppIcon);
-//        Glide.with(context).load(list.get(position).getApp_img()).transition().into(holder.ivAppIcon);
-        holder.appTitle.setText(list.get(position).getApp_title());
+        holder.appTitle.setText(list.get(position).getName());
 
-        if (list.get(position).getApp_isNew() == 1){
+        if (list.get(position).getIsNew() == 1){
             holder.tvIsNew.setVisibility(View.VISIBLE);
         }else {
             holder.tvIsNew.setVisibility(View.INVISIBLE);

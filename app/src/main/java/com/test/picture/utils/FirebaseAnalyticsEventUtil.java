@@ -10,5 +10,6 @@ public class FirebaseAnalyticsEventUtil {
     public static String SHOW_PRODUCT = "admob_btn_show_product";
     public static String DIALOG_SHOW = "admob_dialog_show";
     public static String EXIT_SHOW = "admob_exit_show";
+    public static String REMOVE_AD_DIALOG_SHOW = "admob_remove_ad_dialog_show";
 
 }

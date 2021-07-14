@@ -15,11 +15,11 @@
         android:layout_marginBottom="@dimen/text20"
         >
 
-        <Button
+        <ImageView
             android:id="@+id/btn_back"
             android:layout_width="25dp"
             android:layout_height="25dp"
-            android:background="@drawable/back"
+            android:src="@drawable/back"
             />
 
         <LinearLayout

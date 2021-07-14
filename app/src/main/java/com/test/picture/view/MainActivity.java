@@ -1,7 +1,6 @@
 package com.test.picture.view;
 
 import android.Manifest;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -11,11 +10,14 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
@@ -25,22 +27,18 @@ import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.FullScreenContentCallback;
 import com.google.android.gms.ads.LoadAdError;
 import com.google.android.gms.ads.MobileAds;
-import com.google.android.gms.ads.OnPaidEventListener;
 import com.google.android.gms.ads.OnUserEarnedRewardListener;
-import com.google.android.gms.ads.ResponseInfo;
 import com.google.android.gms.ads.initialization.InitializationStatus;
 import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
 import com.google.android.gms.ads.interstitial.InterstitialAd;
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback;
-import com.google.android.gms.ads.rewarded.OnAdMetadataChangedListener;
 import com.google.android.gms.ads.rewarded.RewardItem;
 import com.google.android.gms.ads.rewarded.RewardedAd;
 import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback;
-import com.google.android.gms.ads.rewarded.ServerSideVerificationOptions;
 import com.huantansheng.easyphotos.EasyPhotos;
 import com.huantansheng.easyphotos.models.album.entity.Photo;
 import com.test.picture.tool.StatisticsManager;
-import com.test.picture.utils.DataCacheUtil;
+import com.test.picture.utils.SharedPreferencesUtil;
 import com.test.picture.view.activity.CameraActivity;
 import com.test.picture.view.activity.CustomPuzzleActivity;
 import com.test.picture.view.activity.ShowProductActivity;
@@ -48,15 +46,12 @@ import com.xinlan.imageeditlibrary.editimage.EditImageActivity;
 import com.test.picture.R;
 import com.test.picture.tool.PhotoTool;
 import com.test.picture.utils.FileUtils;
-import com.test.picture.utils.ToastUtil;
 import com.test.picture.view.activity.BaseActivity;
 import com.test.picture.view.activity.ShowResultActivity;
-import com.google.android.gms.ads.rewarded.RewardedAd;
 
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.function.LongFunction;
 
 import static com.test.picture.utils.FirebaseAnalyticsEventUtil.ALBUM_SINGLE;
 import static com.test.picture.utils.FirebaseAnalyticsEventUtil.CUSTOM_PUZZLE;
@@ -64,8 +59,11 @@ import static com.test.picture.utils.FirebaseAnalyticsEventUtil.DIALOG_SHOW;
 import static com.test.picture.utils.FirebaseAnalyticsEventUtil.EDIT_PHOTO;
 import static com.test.picture.utils.FirebaseAnalyticsEventUtil.EXIT_SHOW;
 import static com.test.picture.utils.FirebaseAnalyticsEventUtil.PUZZLE;
+import static com.test.picture.utils.FirebaseAnalyticsEventUtil.REMOVE_AD_DIALOG_SHOW;
 import static com.test.picture.utils.FirebaseAnalyticsEventUtil.SHOW_PRODUCT;
 import static com.test.picture.utils.FirebaseAnalyticsEventUtil.TAKE_PHOTO;
+import static com.test.picture.utils.SharedPreferencesUtil.GOLD_NUM;
+import static com.test.picture.utils.SharedPreferencesUtil.IS_REMOVE_AD_SUCCESS;
 
 
 public class MainActivity extends BaseActivity {
@@ -97,6 +95,7 @@ public class MainActivity extends BaseActivity {
     private Button mTakenPhoto;//拍摄照片用于编辑
     private Button customPuzzle;//自定义拼图
     private Button showProduct;//自定义拼图
+    private Button btnRemoveAd;//去除广告
     private int imageWidth, imageHeight;//
     private ArrayList<Photo> selectedPhotoList = new ArrayList<>();
     private RewardedAd mRewardedAd;
@@ -106,7 +105,13 @@ public class MainActivity extends BaseActivity {
     private boolean isShowAd = false;
     private AdView mAdView;
     private InterstitialAd mInterstitialAd;
-
+    private AlertDialog dialog;
+    private int getGlod;
+    private RelativeLayout remove_rllt;
+    private RelativeLayout look_movie_rllt;
+    private ImageView dialogDismiss;
+    private boolean isOnClickLookAd = false;
+    private View.OnClickListener dialogListener;
 
 
     @Override
@@ -129,6 +134,7 @@ public class MainActivity extends BaseActivity {
         });
 
 
+        //横幅广告
         mAdView = findViewById(R.id.ad_view);
         AdRequest adRequest = new AdRequest.Builder().build();
         mAdView.loadAd(adRequest);
@@ -144,6 +150,7 @@ public class MainActivity extends BaseActivity {
         mTakenPhoto = findViewById(R.id.take_photo);
         customPuzzle = findViewById(R.id.custom_puzzle);
         showProduct = findViewById(R.id.btn_show_product);
+        btnRemoveAd = findViewById(R.id.btn_remove_ad);
 
     }
 
@@ -155,13 +162,70 @@ public class MainActivity extends BaseActivity {
         mTakenPhoto.setOnClickListener(this);
         customPuzzle.setOnClickListener(this);
         showProduct.setOnClickListener(this);
+        btnRemoveAd.setOnClickListener(this);
+
+        dialogListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                switch (v.getId()){
+                    case R.id.dialog_dismiss:{
+                        dialog.dismiss();
+                        break;
+                    }
+                    case R.id.remove_rllt:{
+                        if (getGlod < 11) {
+                            Toast.makeText(MainActivity.this, "Insufficient gold coins", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(MainActivity.this, "Ads removed successfully", Toast.LENGTH_SHORT).show();
+                            SharedPreferencesUtil.putBoolean(MainActivity.this,IS_REMOVE_AD_SUCCESS,true);
+                        }
+                        dialog.dismiss();
+                        break;
+                    }
+                    case R.id.look_movie_rllt:{
+                        isOnClickLookAd = true;
+                        loadRewardedAd();
+                        dialog.dismiss();
+                        break;
+                    }
+                }
+            }
+        };
     }
+
+    /**
+     * 去除广告提示Dialog
+     */
+    private void removeDialog() {
+
+        //拿去本地存在金币个数
+        getGlod = SharedPreferencesUtil.getInt(this, GOLD_NUM, 0);
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this, R.style.Transparent);
+        dialog = builder.create();
+        dialog.show();
+        dialog.setCanceledOnTouchOutside(false);
+        Window window = dialog.getWindow();
+        window.setContentView(R.layout.remove_adview_show);
+
+        TextView glod_many_tv = dialog.findViewById(R.id.glod_many_tv);
+        dialogDismiss = dialog.findViewById(R.id.dialog_dismiss);
+        remove_rllt = dialog.findViewById(R.id.remove_rllt);
+        look_movie_rllt = dialog.findViewById(R.id.look_movie_rllt);
+
+        dialogDismiss.setOnClickListener(dialogListener);
+        look_movie_rllt.setOnClickListener(dialogListener);
+        remove_rllt.setOnClickListener(dialogListener);
+
+        glod_many_tv.setText(getGlod + "");
+
+        return;
+    }
+
 
     /**
      * 加载激励式广告
      */
-    private void loadRewardedAd()
-    {
+    private void loadRewardedAd() {
         if (mRewardedAd == null) {
             isLoading = true;
             AdRequest adRequest = new AdRequest.Builder().build();
@@ -169,20 +233,17 @@ public class MainActivity extends BaseActivity {
                     this,
                     AD_UNIT_ID,
                     adRequest,
-                    new RewardedAdLoadCallback()
-                    {
+                    new RewardedAdLoadCallback() {
                         @Override
-                        public void onAdFailedToLoad(@NonNull LoadAdError loadAdError)
-                        {
+                        public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
                             // Handle the error.
                             mRewardedAd = null;
                             isLoading = false;
-                            onBackPressed();
+                            isOnClickLookAd = false;
                         }
 
                         @Override
-                        public void onAdLoaded(@NonNull RewardedAd rewardedAd)
-                        {
+                        public void onAdLoaded(@NonNull RewardedAd rewardedAd) {
                             mRewardedAd = rewardedAd;
                             isLoading = false;
                             showRewardedVideo();
@@ -211,7 +272,6 @@ public class MainActivity extends BaseActivity {
 
                     @Override
                     public void onAdFailedToShowFullScreenContent(AdError adError) {
-
                         mRewardedAd = null;
                     }
 
@@ -228,6 +288,13 @@ public class MainActivity extends BaseActivity {
                     @Override
                     public void onUserEarnedReward(@NonNull RewardItem rewardItem) {
                         // Handle the reward.
+
+                        // 广告看完  这里进行添加金币
+                        if (isOnClickLookAd){
+                            int goldNum = SharedPreferencesUtil.getInt(MainActivity.this,GOLD_NUM,0);
+                            SharedPreferencesUtil.putInt(MainActivity.this,GOLD_NUM,goldNum+=1);
+                            isOnClickLookAd = false;
+                        }
                         mRewardedAd = null;
                         return;
                     }
@@ -239,7 +306,8 @@ public class MainActivity extends BaseActivity {
     public void onClick(View v) {
         isShowAd = false;
         num++;
-        if (num % 4 ==0){
+        Boolean isRemoveAdSuccess = SharedPreferencesUtil.getBoolean(MainActivity.this,IS_REMOVE_AD_SUCCESS,false);
+        if (num % 4 == 0 && !isRemoveAdSuccess) {
             loadRewardedAd();
             isShowAd = true;
         }
@@ -248,14 +316,14 @@ public class MainActivity extends BaseActivity {
         switch (v.getId()) {
             case R.id.take_photo: {
                 takePhotoClick();
-                if(isShowAd){
-                    StatisticsManager.uploadAnalyticsEvents(this,TAKE_PHOTO);
+                if (isShowAd) {
+                    StatisticsManager.uploadAnalyticsEvents(this, TAKE_PHOTO);
                 }
                 break;
             }
             case R.id.edit_image: {
                 editImageClick();
-                if(isShowAd) {
+                if (isShowAd) {
                     StatisticsManager.uploadAnalyticsEvents(this, EDIT_PHOTO);
                 }
                 break;
@@ -263,29 +331,36 @@ public class MainActivity extends BaseActivity {
 
             case R.id.select_album_multiple_for_puzzle: {
                 selectFromAlbumMultipleForPuzzle();
-                if(isShowAd) {
+                if (isShowAd) {
                     StatisticsManager.uploadAnalyticsEvents(this, PUZZLE);
                 }
                 break;
             }
             case R.id.select_album_single: {
                 selectFromAlbumSingle();
-                if(isShowAd) {
+                if (isShowAd) {
                     StatisticsManager.uploadAnalyticsEvents(this, ALBUM_SINGLE);
                 }
                 break;
             }
             case R.id.custom_puzzle: {
                 startCustomPuzzle();
-                if(isShowAd) {
+                if (isShowAd) {
                     StatisticsManager.uploadAnalyticsEvents(this, CUSTOM_PUZZLE);
                 }
                 break;
             }
             case R.id.btn_show_product: {
                 startActivity(ShowProductActivity.class);
-                if(isShowAd) {
+                if (isShowAd) {
                     StatisticsManager.uploadAnalyticsEvents(this, SHOW_PRODUCT);
+                }
+                break;
+            }
+            case R.id.btn_remove_ad: {
+                removeDialog();
+                if (isShowAd) {
+                    StatisticsManager.uploadAnalyticsEvents(this, REMOVE_AD_DIALOG_SHOW);
                 }
                 break;
             }
@@ -347,14 +422,13 @@ public class MainActivity extends BaseActivity {
                     selectedPhotoList.clear();
                     selectedPhotoList.addAll(resultPhotos);
 
+
                     if (resultPhotos.size() == 1) {
-                        //如果图片数量为1，则提示用户并重新选择。
-                        ToastUtil.showShortToast(this.getString(R.string.puzzle_toast));
-                        showResult(resultPhotos.get(0).path);
-                    } else {
-                        //大于1，则进入拼图界面
-                        PhotoTool.getInstance().startPuzzleWithPhotos(MainActivity.this, resultPhotos, REQUEST_PUZZLE_CODE);
+                        //如果图片数量为1，则多添加一遍。
+                        selectedPhotoList.addAll(resultPhotos);
                     }
+
+                    PhotoTool.getInstance().startPuzzleWithPhotos(MainActivity.this, selectedPhotoList, REQUEST_PUZZLE_CODE);
 
                     break;
                 }
@@ -391,7 +465,6 @@ public class MainActivity extends BaseActivity {
                     handleEditorImage(data);
                     break;
                 }
-
             }
         }
     }
@@ -434,8 +507,6 @@ public class MainActivity extends BaseActivity {
         } else {
             // 权限已经申请，直接拍照
             startActivity(CameraActivity.class);
-//            startActivity(TakePhotoActivity.class);
-
         }
     }
 
@@ -465,9 +536,9 @@ public class MainActivity extends BaseActivity {
     /**
      * 插页
      */
-    private void interstitialAd(){
+    private void interstitialAd() {
         AdRequest adRequest = new AdRequest.Builder().build();
-        InterstitialAd.load(this,"ca-app-pub-3940256099942544/1033173712", adRequest,
+        InterstitialAd.load(this, "ca-app-pub-3940256099942544/1033173712", adRequest,
                 new InterstitialAdLoadCallback() {
                     @Override
                     public void onAdLoaded(@NonNull InterstitialAd interstitialAd) {
@@ -483,6 +554,30 @@ public class MainActivity extends BaseActivity {
                     }
                 });
     }
+
+    /**
+     * 显示退出弹窗
+     */
+    private void showExitAlertDialog(){
+        AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create();
+        alertDialog.setMessage(this.getResources().getString(R.string.exit_message));
+        alertDialog.setButton(DialogInterface.BUTTON_NEGATIVE, this.getResources().getString(R.string.no), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                alertDialog.dismiss();
+            }
+        });
+
+        alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, this.getResources().getString(R.string.yes), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                StatisticsManager.uploadAnalyticsEvents(MainActivity.this, EXIT_SHOW);
+                onBackPressed();
+            }
+        });
+        alertDialog.show();
+    }
+
     /**
      * 菜单、返回键响应
      */
@@ -490,34 +585,19 @@ public class MainActivity extends BaseActivity {
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             StatisticsManager.uploadAnalyticsEvents(this, DIALOG_SHOW);
-
+            //加载插页式广告
             interstitialAd();
-            if (mInterstitialAd != null) {
+            if (mInterstitialAd!=null){
                 mInterstitialAd.show(MainActivity.this);
-            } else {
-                Log.d("TAG", "The interstitial ad wasn't ready yet.");
+                mInterstitialAd = null;
             }
+            showExitAlertDialog();
 
-            AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create();
-            alertDialog.setMessage("您确认要退出程序");
-            alertDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "否", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    alertDialog.dismiss();
-                }
-            });
-
-            alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, "是", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    StatisticsManager.uploadAnalyticsEvents(MainActivity.this, EXIT_SHOW);
-                    onBackPressed();
-                }
-            });
-            alertDialog.show();
         }
         return true;
     }
+
+
 
 
 

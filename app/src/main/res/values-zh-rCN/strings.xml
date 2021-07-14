@@ -132,5 +132,9 @@
     <string name="edit_hue">色调</string>
     <string name="application">应用</string>
     <string name="app_new">NEW</string>
+    <string name="my_money_tx">My gold coin：</string>
+    <string name="exit_message">是否退出程序？</string>
+    <string name="yes">是</string>
+    <string name="no">否</string>
 
 </resources>

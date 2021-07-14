@@ -38,9 +38,9 @@ public final class MyHttp {
     private static RequestQueue mQueue;
 
 
-    private static final String Message = "message";
-    private static final String SUCCESS = "success";
-    private static final String DATA = "data";
+    private static final String Message = "msg";
+    private static final String SUCCESS = "ok";
+    private static final String DATA = "result";
     private static final String TOKEN_TIMEOUT = "token已过期";
     private static final String HAS_TOKEN = "未过期";
 

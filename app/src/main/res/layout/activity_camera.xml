@@ -47,12 +47,6 @@
                     android:orientation="horizontal"
                     android:background="@android:color/transparent">
                     <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/btn_camera_mode"
-                        android:src="@drawable/icon_video"
-                        android:visibility="gone"/>
-                    <ImageView
                         android:layout_marginLeft="10dp"
                         android:layout_width="wrap_content"
                         android:id="@+id/btn_camera_switch"

@@ -40,6 +40,12 @@
             android:layout_height="wrap_content"
             android:text="产品展示" />
 
+        <Button
+            android:id="@+id/btn_remove_ad"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="去除广告" />
+
     </LinearLayout>
 
     <Button

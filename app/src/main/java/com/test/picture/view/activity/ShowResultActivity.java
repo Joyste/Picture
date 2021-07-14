@@ -14,7 +14,6 @@ import com.huantansheng.easyphotos.models.album.entity.Photo;
 import com.xinlan.imageeditlibrary.editimage.EditImageActivity;
 import com.test.picture.R;
 import com.test.picture.tool.PhotoTool;
-import com.test.picture.utils.DataCacheUtil;
 import com.test.picture.utils.FileUtils;
 import com.test.picture.utils.ToastUtil;
 
@@ -30,7 +29,6 @@ public class ShowResultActivity extends BaseActivity {
     private String TAG = "ShowResultActivity";
     private ImageView ivShowPhoto;
     private Button btnBack;
-    private Button btnSave;
     private Button btnPuzzle;
     private Button btnEdit;
     private Bitmap bitmap;
@@ -54,7 +52,6 @@ public class ShowResultActivity extends BaseActivity {
     protected void initView() {
         ivShowPhoto = findViewById(R.id.iv_show_photo);
         btnBack = findViewById(R.id.btn_back);
-        btnSave = findViewById(R.id.btn_save);
         btnPuzzle = findViewById(R.id.btn_puzzle);
         btnEdit = findViewById(R.id.btn_edit);
 
@@ -64,9 +61,6 @@ public class ShowResultActivity extends BaseActivity {
 
         if (path != null) {
             bitmap = BitmapFactory.decodeFile(path);
-            btnSave.setVisibility(View.GONE);
-        } else {
-            bitmap = (Bitmap) DataCacheUtil.getInstance().getData("photo");
         }
 
         ivShowPhoto.setImageBitmap(bitmap);
@@ -77,7 +71,6 @@ public class ShowResultActivity extends BaseActivity {
     @Override
     protected void initListeners() {
         btnBack.setOnClickListener(this);
-        btnSave.setOnClickListener(this);
         btnPuzzle.setOnClickListener(this);
         btnEdit.setOnClickListener(this);
     }
@@ -87,15 +80,6 @@ public class ShowResultActivity extends BaseActivity {
 
         switch (v.getId()) {
             case R.id.btn_back: {
-                finish();
-                break;
-            }
-            case R.id.btn_save: {
-                //地址
-                String path = savePicture(bitmap);
-                Log.d(TAG, path);
-                ToastUtil.showShortToast(R.string.toast_save + path);
-                EasyPhotos.notifyMedia(this, path);
                 finish();
                 break;
             }
@@ -129,15 +113,6 @@ public class ShowResultActivity extends BaseActivity {
         PhotoTool.getInstance().openAlbumForMultiple(this, 9, selectedPhotoList, REQUEST_MULTIPLE_CODE_FOR_PUZZLE);
     }
 
-
-    /**
-     * 保存图片
-     */
-    private String savePicture(Bitmap bitmap) {
-        String filename = File.separator + System.currentTimeMillis() + ".jpeg";
-        String path = FileUtils.saveBitmap(filename, bitmap);
-        return path;
-    }
 
 
     private void handleEditorImage(Intent data) {

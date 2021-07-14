@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 
 import com.test.picture.R;
 import com.test.picture.adapter.AppListAdapter;
@@ -15,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ShowProductActivity extends BaseActivity {
-    private Button btnBack;
+    private ImageView btnBack;
     private RecyclerView appList;
     private AppListAdapter appListAdapter;
     private List<AppInfo> appInfos = new ArrayList<>();
@@ -55,15 +56,15 @@ public class ShowProductActivity extends BaseActivity {
         AppInfo appInfo1 = new AppInfo();
         AppInfo appInfo2 = new AppInfo();
 
-        appInfo1.setApp_img("https://img1.baidu.com/it/u=2480604110,4008147240&fm=26&fmt=auto&gp=0.jpg");
-        appInfo1.setApp_title("音乐");
-        appInfo1.setApp_isNew(1);
-        appInfo1.setApp_packet("media.mp3player.musicplayer");
+        appInfo1.setIcoUrl("https://img1.baidu.com/it/u=2480604110,4008147240&fm=26&fmt=auto&gp=0.jpg");
+        appInfo1.setName("音乐");
+        appInfo1.setIsNew(1);
+        appInfo1.setLink("media.mp3player.musicplayer");
 
-        appInfo2.setApp_img("https://img1.baidu.com/it/u=2480604110,4008147240&fm=26&fmt=auto&gp=0.jpg");
-        appInfo2.setApp_title("天气");
-        appInfo2.setApp_isNew(1);
-        appInfo2.setApp_packet("weather.forecast.alerts");
+        appInfo2.setIcoUrl("https://img1.baidu.com/it/u=2480604110,4008147240&fm=26&fmt=auto&gp=0.jpg");
+        appInfo2.setName("天气");
+        appInfo2.setIsNew(1);
+        appInfo2.setLink("weather.forecast.alerts");
 
         appInfos.add(appInfo1);
         appInfos.add(appInfo2);

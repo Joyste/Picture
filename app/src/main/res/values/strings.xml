@@ -152,7 +152,16 @@
     <string name="filter_walden">Walden</string>
     <string name="filter_xproii">XproII</string>
 
-    <string name="application">应用</string>
+    <string name="application">Application</string>
     <string name="app_new">NEW</string>
+    <string name="my_money_tx">My gold coin：</string>
+    <string name="move_ad_btn">Remove advertis</string>
+    <string name="look_movie">Get gold coin</string>
+    <string name="exit_message">Are you sure to exit？</string>
+    <string name="yes">yes</string>
+    <string name="no">no</string>
 
+    <string name="move_ad_1">1.Get 1 gold coins each time you watch the video</string>
+    <string name="move_ad_2">2.Only 10 gold coins can remove advertisements</string>
+    <string name="move_ad_3">3.Remove horizontal and insert ads</string>
 </resources>

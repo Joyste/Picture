@@ -3,50 +3,60 @@ package com.test.picture.model;
 import java.io.Serializable;
 
 public class AppInfo implements Serializable {
-    private String app_title;
-    private String app_img;
-    private int app_isNew;
-    private String app_packet;
+    private String name;
+    private String icoUrl;
+    private int isComm;
+    private int isNew;
+    private String link;
 
-    public String getApp_title() {
-        return app_title;
+    public String getName() {
+        return name;
     }
 
-    public void setApp_title(String app_title) {
-        this.app_title = app_title;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getApp_img() {
-        return app_img;
+    public String getIcoUrl() {
+        return icoUrl;
     }
 
-    public void setApp_img(String app_img) {
-        this.app_img = app_img;
+    public void setIcoUrl(String icoUrl) {
+        this.icoUrl = icoUrl;
     }
 
-    public int getApp_isNew() {
-        return app_isNew;
+    public int getIsNew() {
+        return isNew;
     }
 
-    public void setApp_isNew(int app_isNew) {
-        this.app_isNew = app_isNew;
+    public void setIsNew(int isNew) {
+        this.isNew = isNew;
     }
 
-    public String getApp_packet() {
-        return app_packet;
+    public String getLink() {
+        return link;
     }
 
-    public void setApp_packet(String app_packet) {
-        this.app_packet = app_packet;
+    public void setLink(String link) {
+        this.link = link;
+    }
+
+    public int getIsComm() {
+        return isComm;
+    }
+
+    public void setIsComm(int isComm) {
+        this.isComm = isComm;
     }
 
     @Override
     public String toString() {
         return "appInfo{" +
-                "app_title=" + app_title +
-                ", app_img='" + app_img + '\'' +
-                ", app_isNew='" + app_isNew + '\'' +
-                ", app_packet=" + app_packet +
+                "name=" + name +
+                ", icoUrl='" + icoUrl + '\'' +
+                ", isNew='" + isNew + '\'' +
+                ", link=" + link +
                 '}';
     }
+
 }

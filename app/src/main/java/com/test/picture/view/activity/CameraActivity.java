@@ -163,7 +163,6 @@ public class CameraActivity extends BaseActivity {
         mFilterLayout = (LinearLayout) findViewById(R.id.layout_filter);
         mFilterListView = (RecyclerView) findViewById(R.id.filter_listView);
         btn_shutter = (ImageView) findViewById(R.id.btn_camera_shutter);
-        btn_mode = (ImageView) findViewById(R.id.btn_camera_mode);
         btnDelay = findViewById(R.id.btn_delay);
         txtDelayTime = findViewById(R.id.txt_delay_time);
         line1 = findViewById(R.id.line1);
@@ -172,6 +171,7 @@ public class CameraActivity extends BaseActivity {
         line4 = findViewById(R.id.line4);
         btnSubline = findViewById(R.id.btn_subline);
 
+        //滤镜列表
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
         mFilterListView.setLayoutManager(linearLayoutManager);
@@ -188,7 +188,7 @@ public class CameraActivity extends BaseActivity {
         cameraView = (MagicCameraView) findViewById(R.id.glsurfaceview_camera);
         RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) cameraView.getLayoutParams();
         params.width = screenSize.x;
-        params.height = screenSize.x * 4 / 3;
+        params.height = screenSize.x * 4 / 3;//设置长宽比4:3
         cameraView.setLayoutParams(params);
     }
 
@@ -198,20 +198,19 @@ public class CameraActivity extends BaseActivity {
         findViewById(R.id.btn_camera_closefilter).setOnClickListener(listener);
         findViewById(R.id.btn_camera_shutter).setOnClickListener(listener);
         findViewById(R.id.btn_camera_switch).setOnClickListener(listener);
-        findViewById(R.id.btn_camera_mode).setOnClickListener(listener);
         findViewById(R.id.btn_camera_beauty).setOnClickListener(listener);
         btnDelay.setOnClickListener(listener);
         btnSubline.setOnClickListener(listener);
 
+        //监听手机的旋转角度
         mOrientationListener = new OrientationEventListener(this,
                 SensorManager.SENSOR_DELAY_NORMAL) {
-
             @Override
             public void onOrientationChanged(int orientation) {
                 if (orientation == OrientationEventListener.ORIENTATION_UNKNOWN) {
                     return;  //手机平放时，检测不到有效的角度
                 }
-//只检测是否有四个角度的改变
+                //只检测是否有四个角度的改变
                 if (orientation > 350 || orientation < 10) { //0度
                     orientation = 0;
                 } else if (orientation > 80 && orientation < 100) { //90度
@@ -258,15 +257,6 @@ public class CameraActivity extends BaseActivity {
         }
     }
 
-    private void switchMode() {
-        if (mode == MODE_PIC) {
-            mode = MODE_VIDEO;
-            btn_mode.setImageResource(R.drawable.icon_camera);
-        } else {
-            mode = MODE_PIC;
-            btn_mode.setImageResource(R.drawable.icon_video);
-        }
-    }
 
     private void takePhoto() {
         //提示音
@@ -314,16 +304,6 @@ public class CameraActivity extends BaseActivity {
         });
     }
 
-    private void takeVideo() {
-        if (isRecording) {
-            animator.end();
-            magicEngine.stopRecord();
-        } else {
-            animator.start();
-            magicEngine.startRecord();
-        }
-        isRecording = !isRecording;
-    }
 
     private void showFilters() {
         ObjectAnimator animator = ObjectAnimator.ofFloat(mFilterLayout, "translationY", mFilterLayout.getHeight(), 0);
@@ -407,20 +387,15 @@ public class CameraActivity extends BaseActivity {
         @Override
         public void onClick(View v) {
             switch (v.getId()) {
-                case R.id.btn_camera_mode: {
-                    switchMode();
-                    break;
-                }
                 case R.id.btn_camera_shutter: {
                     if (PermissionChecker.checkSelfPermission(CameraActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                             == PackageManager.PERMISSION_DENIED) {
                         ActivityCompat.requestPermissions(CameraActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
                                 v.getId());
                     } else {
-                        if (mode == MODE_PIC)
+                        if (mode == MODE_PIC){
                             takePhoto();
-                        else
-                            takeVideo();
+                        }
                     }
                     break;
                 }

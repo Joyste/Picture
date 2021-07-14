@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="15dp"
+    android:padding="15dp"
+    android:layout_gravity="center"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+<!--    大写头部-->
+    <RelativeLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/have_glod_tv"
+            android:layout_centerVertical="true"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            android:textSize="19sp"
+            android:text="@string/my_money_tx"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <TextView
+            android:layout_marginLeft="5dp"
+            android:layout_toRightOf="@+id/have_glod_tv"
+            android:id="@+id/glod_many_tv"
+            android:layout_centerVertical="true"
+            android:textStyle="bold"
+            android:textColor="#FFCD43"
+            android:textSize="19sp"
+            android:text="0"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <ImageView
+            android:id="@+id/dialog_dismiss"
+            android:padding="10dp"
+            android:onClick="dismiss"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:src="@drawable/exit_close"
+            android:layout_width="40dp"
+            android:layout_height="40dp"/>
+
+    </RelativeLayout>
+
+<!--    内容提示-->
+    <TextView
+        android:layout_marginTop="25dp"
+        android:layout_centerVertical="true"
+        android:textColor="@color/setting_back"
+        android:textSize="15sp"
+        android:text="@string/move_ad_1"
+        android:layout_width="298dp"
+        android:layout_height="wrap_content"/>
+    <TextView
+        android:layout_marginTop="15dp"
+        android:layout_centerVertical="true"
+        android:textColor="@color/setting_back"
+        android:textSize="15sp"
+        android:text="@string/move_ad_2"
+        android:layout_width="298dp"
+        android:layout_height="wrap_content"/>
+    <TextView
+        android:layout_marginTop="15dp"
+        android:layout_centerVertical="true"
+        android:textColor="#999999"
+        android:textSize="15sp"
+        android:text="@string/move_ad_3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+<!--    按钮-->
+    <LinearLayout
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:layout_marginTop="15dp"
+        android:layout_width="match_parent"
+        android:layout_height="50dp">
+
+        <RelativeLayout
+            android:id="@+id/remove_rllt"
+            android:background="@drawable/shape_rmad_item"
+            android:layout_width="140dp"
+            android:layout_height="40dp">
+            <ImageView
+                android:layout_marginLeft="12dp"
+                android:id="@+id/rm_iv"
+                android:src="@drawable/menu_dia_rmad_icon"
+                android:layout_centerVertical="true"
+                android:layout_width="24dp"
+                android:layout_height="24dp"/>
+            <TextView
+                android:layout_toRightOf="@+id/rm_iv"
+                android:gravity="center"
+                android:textSize="12sp"
+                android:textColor="@color/white"
+                android:text="@string/move_ad_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"/>
+        </RelativeLayout>
+        
+
+        <TextView
+            android:layout_width="10dp"
+            android:layout_height="wrap_content"/>
+
+        <RelativeLayout
+            android:id="@+id/look_movie_rllt"
+            android:background="@drawable/shape_lookad_item"
+            android:layout_width="140dp"
+            android:layout_height="40dp">
+            <ImageView
+                android:layout_marginLeft="12dp"
+                android:id="@+id/movie_iv"
+                android:src="@drawable/menu_dia_movie_icon"
+                android:layout_centerVertical="true"
+                android:layout_width="24dp"
+                android:layout_height="24dp"/>
+            <TextView
+                android:layout_toRightOf="@+id/movie_iv"
+                android:gravity="center"
+                android:textSize="12sp"
+                android:textColor="@color/white"
+                android:text="@string/look_movie"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"/>
+        </RelativeLayout>
+
+    </LinearLayout>
+
+
+</LinearLayout>
