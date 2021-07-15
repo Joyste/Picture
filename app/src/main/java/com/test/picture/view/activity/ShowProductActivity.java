@@ -4,16 +4,25 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.test.picture.R;
 import com.test.picture.adapter.AppListAdapter;
+import com.test.picture.http.MyCallBack;
+import com.test.picture.http.OkHttpUtils;
 import com.test.picture.model.AppInfo;
+
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import okhttp3.Request;
+import okhttp3.Response;
 
 public class ShowProductActivity extends BaseActivity {
     private ImageView btnBack;
@@ -53,6 +62,30 @@ public class ShowProductActivity extends BaseActivity {
     }
 
     private void getAppData(){
+
+          OkHttpUtils.getInstance().Get("http://staticoss.lifeexperiencelife.xyz/lfmcplayer/static/apps/produtlist.json", new MyCallBack<String>() {
+              @Override
+              public void onLoadingBefore(Request request) {
+
+              }
+
+              @Override
+              public void onSuccess(Response response, String result) {
+                  Log.d("JSONObject",result);
+              }
+
+              @Override
+              public void onFailure(Request request, Exception e) {
+                  Log.d("JSONObject",e.toString());
+              }
+
+              @Override
+              public void onError(Response response) {
+                  Log.d("JSONObject",response.toString());
+              }
+          });
+
+
         AppInfo appInfo1 = new AppInfo();
         AppInfo appInfo2 = new AppInfo();
 
