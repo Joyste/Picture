@@ -9,26 +9,147 @@
         android:layout_width="fill_parent"
         android:layout_height="55dp"
         android:layout_alignParentTop="true"
-        android:background="#333333">
+        android:background="@color/white">
 
         <ImageView
             android:id="@+id/back_btn"
             android:layout_width="wrap_content"
-            android:layout_height="55dp"
+            android:layout_height="wrap_content"
             android:layout_gravity="left|center_vertical"
-            android:layout_margin="10dp"
-            android:layout_marginLeft="0dp"
-            android:src="@drawable/back_arrow" />
+            android:layout_marginStart="15dp"
+            android:src="@drawable/ico_edit_back" />
 
-        <TextView
-            android:id="@+id/title"
+
+
+        <FrameLayout
             android:layout_width="wrap_content"
-            android:layout_height="fill_parent"
-            android:layout_gravity="center"
-            android:gravity="center"
-            android:text="@string/app_name"
-            android:textColor="#ffffff"
-            android:textSize="20sp" />
+            android:layout_height="wrap_content"
+            android:layout_gravity="center">
+            <LinearLayout
+                android:id="@+id/redo_uodo_panel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                >
+                <FrameLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="20dp">
+                    <FrameLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/ico_gray_uodo"
+                            android:layout_margin="10dp"/>
+                    </FrameLayout>
+
+                    <FrameLayout
+                        android:id="@+id/uodo_btn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/uodo"
+                            android:layout_margin="10dp"/>
+                    </FrameLayout>
+
+                </FrameLayout>
+
+                <FrameLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+                    <FrameLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/ico_gray_redo"
+                            android:layout_margin="10dp"/>
+                    </FrameLayout>
+
+                    <FrameLayout
+                        android:id="@+id/redo_btn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/redo"
+                            android:layout_margin="10dp"/>
+                    </FrameLayout>
+                </FrameLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/paint_redo_uodo_panel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:visibility="gone"
+                >
+                <FrameLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="20dp">
+                    <FrameLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/ico_gray_uodo"
+                            android:layout_margin="10dp"/>
+                    </FrameLayout>
+
+                    <FrameLayout
+                        android:id="@+id/paint_redo_btn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone"
+                        >
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/uodo"
+                            android:layout_margin="10dp"/>
+                    </FrameLayout>
+
+                </FrameLayout>
+
+                <FrameLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+                    <FrameLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/ico_gray_redo"
+                            android:layout_margin="10dp"/>
+                    </FrameLayout>
+                    <FrameLayout
+                        android:id="@+id/paint_undo_btn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone"
+                        >
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/redo"
+                            android:layout_margin="10dp"
+                            />
+                    </FrameLayout>
+
+                </FrameLayout>
+            </LinearLayout>
+        </FrameLayout>
+
 
         <ViewFlipper
             android:id="@+id/banner_flipper"
@@ -45,7 +166,7 @@
                 android:layout_height="fill_parent"
                 android:gravity="center"
                 android:text="@string/save"
-                android:textColor="#ffffff"
+                android:textColor="@color/materialcolorpicker__black"
                 android:textSize="20sp" />
 
             <TextView
@@ -54,7 +175,7 @@
                 android:layout_height="fill_parent"
                 android:gravity="center"
                 android:text="@string/apply"
-                android:textColor="#ffffff"
+                android:textColor="@color/materialcolorpicker__black"
                 android:textSize="20sp" />
         </ViewFlipper>
     </FrameLayout>
@@ -64,7 +185,7 @@
         android:layout_width="fill_parent"
         android:layout_height="80dp"
         android:layout_alignParentBottom="true"
-        android:background="@color/main_backgroud"
+        android:background="@color/white"
         android:overScrollMode="never" />
 
     <FrameLayout
@@ -73,7 +194,7 @@
         android:layout_height="fill_parent"
         android:layout_above="@id/bottom_gallery"
         android:layout_below="@id/banner"
-        android:background="#000000">
+        android:background="#fff7f7f7">
 
         <com.xinlan.imageeditlibrary.editimage.view.imagezoom.ImageViewTouch
             android:id="@+id/main_image"
@@ -109,35 +230,16 @@
             android:layout_gravity="center"
             android:visibility="gone" />
 
+
         <com.xinlan.imageeditlibrary.editimage.view.CustomPaintView
             android:id="@+id/custom_paint_view"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:layout_gravity="center"
             android:visibility="gone" />
+
     </FrameLayout>
 
-    <LinearLayout
-        android:id="@+id/redo_uodo_panel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@id/bottom_gallery"
-        android:layout_alignParentRight="true"
-        android:orientation="horizontal"
-        android:paddingBottom="5dp"
-        android:paddingLeft="8dp"
-        android:paddingRight="10dp">
-        <ImageView
-            android:id="@+id/uodo_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="5dp"
-            android:src="@drawable/uodo" />
-        <ImageView
-            android:id="@+id/redo_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/redo" />
-    </LinearLayout>
+
 
 </RelativeLayout>

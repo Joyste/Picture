@@ -2,6 +2,7 @@ package com.xinlan.imageeditlibrary.editimage.fragment;
 
 import android.annotation.TargetApi;
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -11,6 +12,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.SeekBar;
+import android.widget.TextView;
 
 import com.xinlan.imageeditlibrary.BaseActivity;
 import com.xinlan.imageeditlibrary.R;
@@ -36,11 +38,15 @@ public class BeautyFragment extends BaseEditFragment implements SeekBar.OnSeekBa
 
     private SeekBar mSmoothValueBar;
     private SeekBar mWhiteValueBar;
+    private TextView mBeautyValue;
+    private TextView mSmoothValue;
 
     private BeautyTask mHandleTask;
 
     private int mSmooth = 0;//磨皮值
     private int mWhiteSkin = 0;//美白值
+    private boolean isBack = false;
+    private boolean isApply = true;
 
     private WeakReference<Bitmap> mResultBitmapRef;
 
@@ -60,6 +66,8 @@ public class BeautyFragment extends BaseEditFragment implements SeekBar.OnSeekBa
 
         mSmoothValueBar = (SeekBar) mainView.findViewById(R.id.smooth_value_bar);
         mWhiteValueBar = (SeekBar) mainView.findViewById(R.id.white_skin_value_bar);
+        mBeautyValue = mainView.findViewById(R.id.tv_beauty_value);
+        mSmoothValue = mainView.findViewById(R.id.tv_smooth_value);
         return mainView;
     }
 
@@ -81,6 +89,11 @@ public class BeautyFragment extends BaseEditFragment implements SeekBar.OnSeekBa
 
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+        if (seekBar.getId() == R.id.smooth_value_bar) {
+            mSmoothValue.setText(String.valueOf(progress));
+        }else {
+            mBeautyValue.setText(String.valueOf(progress));
+        }
     }
 
     @Override
@@ -120,6 +133,25 @@ public class BeautyFragment extends BaseEditFragment implements SeekBar.OnSeekBa
      */
     @Override
     public void backToMain() {
+        if(mSmoothValueBar.getProgress()!=0 ||mWhiteValueBar.getProgress()!=0  ){
+            showAlertDialog(getContext(), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    applyBeauty();
+                }
+            }, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                    back();
+                }
+            });
+        }else {
+            back();
+        }
+    }
+
+    private void back(){
         this.mSmooth = 0;
         this.mWhiteSkin = 0;
         mSmoothValueBar.setProgress(0);
@@ -132,6 +164,7 @@ public class BeautyFragment extends BaseEditFragment implements SeekBar.OnSeekBa
         activity.mainImage.setVisibility(View.VISIBLE);
         activity.mainImage.setScaleEnabled(true);
         activity.bannerFlipper.showPrevious();
+        activity.setRedoUndoPanelVisibility(View.VISIBLE);
     }
 
     @Override
@@ -141,14 +174,14 @@ public class BeautyFragment extends BaseEditFragment implements SeekBar.OnSeekBa
         activity.mainImage.setDisplayType(ImageViewTouchBase.DisplayType.FIT_TO_SCREEN);
         activity.mainImage.setScaleEnabled(false);
         activity.bannerFlipper.showNext();
+        activity.setRedoUndoPanelVisibility(View.INVISIBLE);
     }
 
     public void applyBeauty() {
-        if (mResultBitmapRef.get() != null && (mSmooth != 0 || mWhiteSkin != 0)) {
+        if (mSmooth != 0 || mWhiteSkin != 0) {
             activity.changeMainBitmap(mResultBitmapRef.get(),true);
         }
-
-        backToMain();
+        back();
     }
 
     /**

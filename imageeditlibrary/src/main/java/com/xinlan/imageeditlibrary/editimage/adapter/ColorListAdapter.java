@@ -2,9 +2,13 @@ package com.xinlan.imageeditlibrary.editimage.adapter;
 
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.RecyclerView.ViewHolder;
+
+import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.xinlan.imageeditlibrary.R;
 import com.xinlan.imageeditlibrary.editimage.fragment.PaintFragment;
@@ -18,24 +22,36 @@ import com.xinlan.imageeditlibrary.editimage.fragment.PaintFragment;
 public class ColorListAdapter extends RecyclerView.Adapter<ViewHolder> {
     public static final int TYPE_COLOR = 1;
     public static final int TYPE_MORE = 2;
+    private int curPosition = -1;
+    private View curView;
 
     public interface IColorListAction{
         void onColorSelected(final int position,final int color);
         void onMoreSelected(final int position);
     }
 
-    private PaintFragment mContext;
+    private Context mContext;
     private int[] colorsData;
 
     private IColorListAction mCallback;
+    private boolean isWhite = false;
 
+    public boolean isWhite() {
+        return isWhite;
+    }
 
-    public ColorListAdapter(PaintFragment frg, int[] colors,IColorListAction action) {
+    public void setWhite(boolean white) {
+        isWhite = white;
+    }
+
+    public ColorListAdapter(Context frg, int[] colors, IColorListAction action) {
         super();
         this.mContext = frg;
         this.colorsData = colors;
         this.mCallback = action;
     }
+
+
 
     public class ColorViewHolder extends ViewHolder {
         View colorPanelView;
@@ -47,13 +63,14 @@ public class ColorListAdapter extends RecyclerView.Adapter<ViewHolder> {
     }// end inner class
 
     public class MoreViewHolder extends ViewHolder {
-        View moreBtn;
+        TextView moreBtn;
         public MoreViewHolder(View itemView) {
             super(itemView);
             this.moreBtn = itemView.findViewById(R.id.color_panel_more);
         }
 
     }//end inner class
+
 
     @Override
     public int getItemCount() {
@@ -93,11 +110,18 @@ public class ColorListAdapter extends RecyclerView.Adapter<ViewHolder> {
     }
 
     private void onBindColorViewHolder(final ColorViewHolder holder,final int position){
-        holder.colorPanelView.setBackgroundColor(colorsData[position]);
-        holder.colorPanelView.setOnClickListener(new View.OnClickListener() {
+        holder.colorPanelView.setBackgroundColor(mContext.getResources().getColor(colorsData[position]));
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(mCallback!=null){
+                    if(curView!=null){
+                        curView.setVisibility(View.INVISIBLE);
+                    }
+                    View view = holder.itemView.findViewById(R.id.ico_selected);
+                    view.setVisibility(View.VISIBLE);
+                    curPosition = position;
+                    curView = view;
                     mCallback.onColorSelected(position,colorsData[position]);
                 }
             }
@@ -105,10 +129,16 @@ public class ColorListAdapter extends RecyclerView.Adapter<ViewHolder> {
     }
 
     private void onBindColorMoreViewHolder(final MoreViewHolder holder,final int position){
+        if(isWhite){
+            holder.moreBtn.setTextColor(Color.WHITE);
+        }
         holder.moreBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(mCallback!=null){
+                    if(curView!=null){
+                        curView.setVisibility(View.INVISIBLE);
+                    }
                     mCallback.onMoreSelected(position);
                 }
             }

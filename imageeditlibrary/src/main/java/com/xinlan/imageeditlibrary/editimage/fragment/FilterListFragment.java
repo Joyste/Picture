@@ -2,6 +2,7 @@ package com.xinlan.imageeditlibrary.editimage.fragment;
 
 import android.annotation.TargetApi;
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.AsyncTask;
@@ -12,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -37,8 +39,13 @@ public class FilterListFragment extends BaseEditFragment {
     private Bitmap fliterBit;// 滤镜处理后的bitmap
 
     private LinearLayout mFilterGroup;// 滤镜列表
+    private int[] filterIcon = {R.drawable.ico_filter_1, R.drawable.ico_filter_2, R.drawable.ico_filter_3, R.drawable.ico_filter_4, R.drawable.ico_filter_5, R.drawable.ico_filter_6, R.drawable.ico_filter_7, R.drawable.ico_filter_8, R.drawable.ico_filter_9, R.drawable.ico_filter_10, R.drawable.ico_filter_11, R.drawable.ico_filter_12, R.drawable.ico_filter_13};
+
+
     private String[] fliters;
     private Bitmap currentBitmap;// 标记变量
+    private View curView;
+    private int curPosition;
 
     public static FilterListFragment newInstance() {
         FilterListFragment fragment = new FilterListFragment();
@@ -64,6 +71,7 @@ public class FilterListFragment extends BaseEditFragment {
         backBtn = mainView.findViewById(R.id.back_to_main);
         mFilterGroup = (LinearLayout) mainView.findViewById(R.id.filter_group);
 
+
         backBtn.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -81,6 +89,7 @@ public class FilterListFragment extends BaseEditFragment {
         activity.mainImage.setDisplayType(ImageViewTouchBase.DisplayType.FIT_TO_SCREEN);
         activity.mainImage.setScaleEnabled(false);
         activity.bannerFlipper.showNext();
+        activity.setRedoUndoPanelVisibility(View.INVISIBLE);
     }
 
     /**
@@ -88,6 +97,26 @@ public class FilterListFragment extends BaseEditFragment {
      */
     @Override
     public void backToMain() {
+        if(curPosition != 0){
+            showAlertDialog(getContext(), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    activity.changeMainBitmap(fliterBit,true);
+                    back();
+                }
+            }, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                    back();
+                }
+            });
+        }else {
+            back();
+        }
+    }
+
+    private void back(){
         currentBitmap = activity.getMainBit();
         fliterBit = null;
         activity.mainImage.setImageBitmap(activity.getMainBit());// 返回原图
@@ -95,6 +124,7 @@ public class FilterListFragment extends BaseEditFragment {
         activity.bottomGallery.setCurrentItem(0);
         activity.mainImage.setScaleEnabled(true);
         activity.bannerFlipper.showPrevious();
+        activity.setRedoUndoPanelVisibility(View.VISIBLE);
     }
 
     /**
@@ -104,12 +134,12 @@ public class FilterListFragment extends BaseEditFragment {
         // System.out.println("保存滤镜处理后的图片");
         if (currentBitmap == activity.getMainBit()) {// 原始图片
             // System.out.println("原始图片");
-            backToMain();
+            back();
             return;
         } else {// 经滤镜处理后的图片
             // System.out.println("滤镜图片");
             activity.changeMainBitmap(fliterBit,true);
-            backToMain();
+            back();
         }// end if
     }
 
@@ -127,15 +157,23 @@ public class FilterListFragment extends BaseEditFragment {
         params.gravity = Gravity.CENTER_VERTICAL;
         params.leftMargin = 20;
         params.rightMargin = 20;
+
         mFilterGroup.removeAllViews();
         for (int i = 0, len = fliters.length; i < len; i++) {
-            TextView text = new TextView(activity);
-            text.setTextColor(Color.WHITE);
-            text.setTextSize(20);
+            LinearLayout mFilterItem = (LinearLayout) getLayoutInflater().inflate(R.layout.view_fliter_item, null);
+            ImageView imageView = mFilterItem.findViewById(R.id.iv_filter_icon);
+            imageView.setImageResource(filterIcon[i]);
+            TextView text = mFilterItem.findViewById(R.id.tv_filter_name);
             text.setText(fliters[i]);
-            mFilterGroup.addView(text, params);
-            text.setTag(i);
-            text.setOnClickListener(new FliterClick());
+            if(i==0){
+                ImageView selected = mFilterItem.findViewById(R.id.iv_filter_icon_selected);
+                selected.setVisibility(View.VISIBLE);
+                curView = selected;
+                curPosition = 0;
+            }
+            mFilterGroup.addView(mFilterItem, params);
+            mFilterItem.setTag(i);
+            mFilterItem.setOnClickListener(new FliterClick());
         }// end for i
     }
 
@@ -157,8 +195,15 @@ public class FilterListFragment extends BaseEditFragment {
             if (position == 0) {// 原始图片效果
                 activity.mainImage.setImageBitmap(activity.getMainBit());
                 currentBitmap = activity.getMainBit();
-                return;
             }
+            if(curView!=null){
+                curView.setVisibility(View.INVISIBLE);
+            }
+            ImageView selected = v.findViewById(R.id.iv_filter_icon_selected);
+            selected.setVisibility(View.VISIBLE);
+            curView = selected;
+            curPosition = position;
+
             // 滤镜处理
             ProcessingImage task = new ProcessingImage();
             task.execute(position);

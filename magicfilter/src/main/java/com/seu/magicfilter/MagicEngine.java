@@ -58,6 +58,14 @@ public class MagicEngine {
         CameraEngine.switchCamera();
     }
 
+    public int getCameraId(){
+        return CameraEngine.getCameraID();
+    }
+
+    public void switchFlashLight(int level){
+        CameraEngine.switchFlashLight(level);
+    }
+
     public static class Builder{
 
         public MagicEngine build(MagicBaseView magicBaseView) {

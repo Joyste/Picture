@@ -123,7 +123,6 @@ public class MainMenuFragment extends BaseEditFragment implements View.OnClickLi
 
     /**
      * 裁剪模式
-     *
      * @author panyi
      */
     private void onCropClick() {
@@ -133,7 +132,6 @@ public class MainMenuFragment extends BaseEditFragment implements View.OnClickLi
 
     /**
      * 图片旋转模式
-     *
      * @author panyi
      */
     private void onRotateClick() {

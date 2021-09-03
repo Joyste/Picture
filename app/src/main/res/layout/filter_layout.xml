@@ -9,21 +9,18 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/filter_listView"
         android:layout_width="match_parent"
-        android:layout_height="94.0dip"
-        android:padding="5.0dip"
+        android:layout_height="94dp"
+        android:padding="5dp"
         android:scrollbars="none"
-        android:background="@android:color/white"/>       
-    <View 
-        android:layout_width="match_parent"
-        android:layout_height="1px"
-        android:background="@android:color/black"/>
+        />
 
     <ImageView
         android:background="@android:color/white"
         android:id="@+id/btn_camera_closefilter" 
         android:layout_width="match_parent" 
-        android:layout_height="26dip"
+        android:layout_height="@dimen/text26"
         android:scaleType="center"
         android:layout_gravity="center_horizontal"
-        android:src="@drawable/btn_layout_filters_bar_close" />
+        android:visibility="gone"
+         />
 </LinearLayout>

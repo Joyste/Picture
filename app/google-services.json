@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "334587384014",
+    "project_id": "tool-life-exp-beaautycamera",
+    "storage_bucket": "tool-life-exp-beaautycamera.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:334587384014:android:9b10a28580047e92dc409f",
+        "android_client_info": {
+          "package_name": "lifeexperience.tool.beautycamera"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "334587384014-rrcl3g2dsstea7kgta4p2ro7i2u1i5f1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCOLrvqrqm6bdiKoTHzP2YTAOtp6wOIx1k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "334587384014-rrcl3g2dsstea7kgta4p2ro7i2u1i5f1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

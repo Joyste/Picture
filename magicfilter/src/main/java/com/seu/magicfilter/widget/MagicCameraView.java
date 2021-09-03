@@ -12,11 +12,13 @@ import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.SurfaceTexture;
+import android.graphics.drawable.Drawable;
 import android.hardware.Camera;
 import android.opengl.EGL14;
 import android.opengl.GLES20;
 import android.os.Build;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.Surface;
 import android.view.SurfaceHolder;
@@ -40,6 +42,7 @@ import com.seu.magicfilter.utils.TextureRotationUtil;
 import com.seu.magicfilter.widget.base.MagicBaseView;
 
 import java.io.File;
+import java.math.BigDecimal;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
@@ -51,6 +54,7 @@ import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
 
+import static android.content.ContentValues.TAG;
 import static com.seu.magicfilter.camera.CameraEngine.getCameraID;
 
 /**
@@ -78,6 +82,7 @@ public class MagicCameraView extends MagicBaseView {
 
     private File outputFile;
     private int mSensorRotation;
+    private float ratio = 4/3f;
 
     public int getmSensorRotation() {
         return mSensorRotation;
@@ -87,6 +92,13 @@ public class MagicCameraView extends MagicBaseView {
         this.mSensorRotation = mSensorRotation;
     }
 
+    public float getRatio() {
+        return ratio;
+    }
+
+    public void setRatio(float ratio) {
+        this.ratio = ratio;
+    }
 
     public MagicCameraView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -240,32 +252,69 @@ public class MagicCameraView extends MagicBaseView {
                 queueEvent(new Runnable() {
                     @Override
                     public void run() {
-                        Bitmap photo = drawPhoto(bitmap, CameraEngine.getCameraInfo().isFront);
+                        CameraInfo cameraInfo = CameraEngine.getCameraInfo();
+                        Bitmap photo = drawPhoto(bitmap, cameraInfo.isFront);
                         GLES20.glViewport(0, 0, surfaceWidth, surfaceHeight);
                         if (photo != null) {
-
                             Matrix matrix = new Matrix();
                             //利用传感器获取当前屏幕方向对应角度 加上 开始预览是角度
-                            int rotation = (calculateCameraPreviewOrientation((Activity) MagicParams.context) + mSensorRotation) % 360;
+                            int rotation = (calculateCameraPreviewOrientation((Activity) MagicParams.context)) % 360;
                             if (getCameraID() == Camera.CameraInfo.CAMERA_FACING_BACK) {
                                 //如果是后置摄像头因为没有镜面效果直接旋转特定角度
                                 matrix.setRotate(rotation);
                             } else {
                                 //如果是前置摄像头需要做镜面操作，然后对图片做镜面postScale(-1, 1)
                                 //因为镜面效果需要360-rotation，才是前置摄像头真正的旋转角度
+                                Log.d("=========", "rotation"+rotation);
                                 rotation = (rotation + 180) % 360;
+//                                Log.d("=========", "rotation"+rotation);
                                 matrix.setRotate(rotation);
+                                matrix.postScale(-1, 1);
                             }
                             photo = Bitmap.createBitmap(photo, 0, 0, photo.getWidth(), photo.getHeight(), matrix, true);
-
+                            if(photo.getWidth() > photo.getHeight()) {
+                                photo = rotateBitmapByDegree(photo,-90);
+                            }
+                            photo = rotateBitmapByDegree(photo,mSensorRotation);
+                            Log.d("run", "run: "+ratio);
+                            photo = cropBitmap(photo,ratio);
                             savePictureTask.execute(photo);
-
                         }
                     }
                 });
                 CameraEngine.startPreview();
             }
         });
+    }
+
+    /**
+     * 将图片按照某个角度进行旋转
+     *
+     * @param bm
+     *            需要旋转的图片
+     * @param degree
+     *            旋转角度
+     * @return 旋转后的图片
+     */
+    public static Bitmap rotateBitmapByDegree(Bitmap bm, int degree) {
+        Bitmap returnBm = null;
+
+        // 根据旋转角度，生成旋转矩阵
+        Matrix matrix = new Matrix();
+        matrix.postRotate(degree);
+        try {
+            // 将原始图片按照旋转矩阵进行旋转，并得到新的图片
+            returnBm = Bitmap.createBitmap(bm, 0, 0, bm.getWidth(), bm.getHeight(), matrix, true);
+        } catch (OutOfMemoryError e) {
+        }
+        if (returnBm == null) {
+            returnBm = bm;
+        }
+        if (bm != returnBm) {
+            bm.recycle();
+        }
+        return returnBm;
+
     }
 
 
@@ -348,7 +397,7 @@ public class MagicCameraView extends MagicBaseView {
                 .asFloatBuffer();
         gLCubeBuffer.put(TextureRotationUtil.CUBE).position(0);
         if (isRotated)
-            gLTextureBuffer.put(TextureRotationUtil.getRotation(Rotation.NORMAL, false, false)).position(0);
+            gLTextureBuffer.put(TextureRotationUtil.getRotation(Rotation.NORMAL, false, true)).position(0);
         else
             gLTextureBuffer.put(TextureRotationUtil.getRotation(Rotation.NORMAL, false, true)).position(0);
 
@@ -382,4 +431,77 @@ public class MagicCameraView extends MagicBaseView {
         cameraInputFilter.onBeautyLevelChanged();
     }
 
+    /**
+     * 裁剪
+     *
+     * @param bitmap 原图
+     * @return 裁剪后的图像
+     */
+    private Bitmap cropBitmap(Bitmap bitmap,float ratio) {
+        int w = bitmap.getWidth(); // 得到图片的宽，高
+        int h = bitmap.getHeight();
+
+        Log.d("==========", "cropBitmap: w："+w+",h:"+h);
+
+        if(h>w){
+            if(ratio == 1f){
+                int y = (h-w)/2;
+                return Bitmap.createBitmap(bitmap, 0, y, w, w, null, false);
+            }else if(ratio == 4/3f){
+                float newRatio = (float)h/w;
+                newRatio = new BigDecimal(newRatio).setScale(10, BigDecimal.ROUND_HALF_UP).floatValue();
+                if(newRatio - ratio >= 0){
+                    int y = (int)(h-w*ratio)/2;
+                    y = Math.max(y, 0);
+                    return Bitmap.createBitmap(bitmap, 0, y, w,(int)(w*ratio), null, false);
+                }else {
+                    int x = (int)(w-h/ratio)/2;
+                    x = Math.max(x, 0);
+                    return Bitmap.createBitmap(bitmap, x, 0, (int)(h/ratio),h, null, false);
+                }
+            }else if(ratio == 16/9f){
+                float newRatio = (float)h/w;
+                newRatio = new BigDecimal(newRatio).setScale(10, BigDecimal.ROUND_HALF_UP).floatValue();
+                if(newRatio - ratio >= 0){
+                    int y = (int)(h-w*ratio)/2;
+                    y = Math.max(y, 0);
+                    return Bitmap.createBitmap(bitmap, 0, y, w,(int)(w*ratio), null, false);
+                }else {
+                    int x = (int)(w-h/ratio)/2;
+                    x = Math.max(x, 0);
+                    return Bitmap.createBitmap(bitmap, x, 0, (int)(h/ratio),h, null, false);
+                }
+            }
+        }else {
+            if(ratio == 1f){
+                int x = (w-h)/2;
+                return Bitmap.createBitmap(bitmap, x, 0, h, h, null, false);
+            }else if(ratio == 4/3f){
+                float newRatio = (float)w/h;
+                newRatio = new BigDecimal(newRatio).setScale(10, BigDecimal.ROUND_HALF_UP).floatValue();
+                if(newRatio - ratio >= 0 ){
+                    int x = (int)(w-h*ratio)/2;
+                    x = Math.max(x, 0);
+                    return Bitmap.createBitmap(bitmap, x, 0, (int)(h*ratio),h, null, false);
+                }else {
+                    int y = (int)(h-w/ratio)/2;
+                    y = Math.max(y, 0);
+                    return Bitmap.createBitmap(bitmap, 0, y,w,(int)(w/ratio), null, false);
+                }
+            }else if(ratio == 16/9f){
+                float newRatio = (float)w/h;
+                newRatio = new BigDecimal(newRatio).setScale(10, BigDecimal.ROUND_HALF_UP).floatValue();
+                if(newRatio - ratio >= 0){
+                    int x = (int)(w-h*ratio)/2;
+                    x = Math.max(x, 0);
+                    return Bitmap.createBitmap(bitmap,x, 0, (int)(h*ratio),h, null, false);
+                }else {
+                    int y = (int)(h-w/ratio)/2;
+                    y = Math.max(y, 0);
+                    return Bitmap.createBitmap(bitmap, 0,y,w,(int)(w/ratio), null, false);
+                }
+            }
+        }
+        return bitmap;
+    }
 }

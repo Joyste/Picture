@@ -26,7 +26,7 @@ public class CropImageView extends View {
 	private static int STATUS_MOVE = 2;// 移动状态
 	private static int STATUS_SCALE = 3;// 缩放状态
 
-	private int CIRCLE_WIDTH = 46;
+	private int CIRCLE_WIDTH = 60;
 	private Context mContext;
 	private float oldx, oldy;
 	private int status = STATUS_IDLE;
@@ -70,7 +70,7 @@ public class CropImageView extends View {
 		mContext = context;
 		mBackgroundPaint = PaintUtil.newBackgroundPaint(context);
 		circleBit = BitmapFactory.decodeResource(context.getResources(),
-				R.drawable.sticker_rotate);
+				R.drawable.ico_sticker_rotate);
 		circleRect.set(0, 0, circleBit.getWidth(), circleBit.getHeight());
 		leftTopCircleRect = new RectF(0, 0, CIRCLE_WIDTH, CIRCLE_WIDTH);
 		rightTopCircleRect = new RectF(leftTopCircleRect);

@@ -1,26 +1,43 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:background="@color/main_backgroud"
+    android:background="@color/white"
     android:orientation="horizontal" >
 
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_marginHorizontal="@dimen/text_10sp"
+        android:text="Size"
+        android:textColor="@color/black"
+        android:textSize="@dimen/text_13sp"/>
 
     <SeekBar
         android:id="@+id/stoke_width_seekbar"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
+        android:thumb="@drawable/ico_seekbar_point"
+        android:progressDrawable="@drawable/bg_adjust_seek_bar"
+        android:maxHeight="3dp"
+        android:minHeight="3dp"
+        android:splitTrack="false"
         android:layout_margin="4dp"
         android:layout_weight="1"
         android:max="100" />
 
+
+
+
     <TextView
         android:id="@+id/seekbar_value"
-        android:layout_width="wrap_content"
+        android:layout_width="30dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:layout_margin="10dp"
-        android:textColor="@color/white"
+        android:textColor="@color/black"
         android:text="@string/hint_seekbar_value"
         />
 </LinearLayout>

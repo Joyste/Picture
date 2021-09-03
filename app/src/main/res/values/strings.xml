@@ -1,97 +1,98 @@
 <resources>
-    <string name="app_name">PhotoCamera</string>
-    <string name="choose_image_puzzle">拼图</string>
-    <string name="choose_image_single">从图库选择照片（单选）</string>
-    <string name="edit_image">修改照片</string>
-    <string name="custom_puzzle">自定义拼图</string>
-    <string name="take_photo">拍照</string>
-    <string name="no_images">no found the image</string>
+    <string name="app_name">Beauty Camera</string>
+    <string name="choose_image_puzzle">Jigsaw puzzle</string>
+    <string name="choose_image_single">Gallery</string>
+    <string name="edit_image">Edit</string>
+    <string name="custom_puzzle">Free Play</string>
+    <string name="Beauty">Beauty</string>
+    <string name="take_photo">Take photo</string>
+    <string name="no_images">No found the image</string>
     <string name="images">%d images</string>
-    <string name="second">秒</string>
-    <string name="toast_save">已保存到：</string>
-    <string name="camera_no_permissions_toast">请前往设置，打开拍照权限，否则功能无法使用</string>
-    <string name="toast_permissions">无权限，请前往设置打开权限</string>
-    <string name="notifyTitle">提示</string>
-    <string name="notifyMsg">当前应用缺少必要权限。\n\n请点击\"设置\"-\"权限\"-打开所需权限。</string>
-    <string name="setting">设置</string>
-    <string name="cancel">取消</string>
+    <string name="second">s</string>
+    <string name="toast_save">Has been saved to：</string>
+    <string name="camera_no_permissions_toast">Please go to Settings and enable the permission to take photos. Otherwise, the function will not be available</string>
+    <string name="toast_permissions">No permission, please go to set open permission</string>
+    <string name="notifyTitle">Hint</string>
+    <string name="notifyMsg">The current application lacks necessary permissions。\n\nPlease click\"Setting\"-\"permissions\"-Turn on the required permissions。</string>
+    <string name="setting">Settings</string>
+    <string name="cancel">Cancel</string>
 
-    <string name="puzzle_toast">拼图仅限两张以上</string>
+    <string name="puzzle_toast">Puzzles are limited to more than two pieces</string>
 
-    <string name="selector_folder_all_easy_photos">所有图片</string>
+    <string name="selector_folder_all_easy_photos">All photos</string>
 
-    <string name="selector_folder_all_video_photo_easy_photos">图片和视频</string>
+    <string name="selector_folder_all_video_photo_easy_photos">Videos and photos</string>
 
-    <string name="selector_folder_video_easy_photos">所有视频</string>
+    <string name="selector_folder_video_easy_photos">All videos</string>
 
-    <string name="selector_easy_photos">选择</string>
+    <string name="selector_easy_photos">Selector</string>
 
-    <string name="selector_action_done_easy_photos">完成(%1$d/%2$d)</string>
+    <string name="selector_action_done_easy_photos">Done(%1$d/%2$d)</string>
 
-    <string name="selector_preview_easy_photos">预览</string>
+    <string name="selector_preview_easy_photos">Preview</string>
 
-    <string name="selector_reach_max_hint_easy_photos">最多只能选择%d张图片或视频</string>
+    <string name="selector_reach_max_hint_easy_photos">A maximum of %d images or videos can be selected</string>
 
-    <string name="selector_reach_max_image_hint_easy_photos">最多只能选择%d张图片</string>
+    <string name="selector_reach_max_image_hint_easy_photos">A maximum of %d images can be selected</string>
 
-    <string name="selector_reach_max_video_hint_easy_photos">最多只能选择%d个视频</string>
+    <string name="selector_reach_max_video_hint_easy_photos">A maximum of %d videos can be selected</string>
 
-    <string name="selector_single_type_hint_easy_photos">只能选择一种类型文件</string>
+    <string name="selector_single_type_hint_easy_photos">Only one type of file can be selected</string>
 
-    <string name="msg_no_camera_easy_photos">无法启动相机！</string>
+    <string name="msg_no_camera_easy_photos">Unable to start camera！</string>
 
-    <string name="camera_temp_file_error_easy_photos">图片错误</string>
+    <string name="camera_temp_file_error_easy_photos">Image error</string>
 
-    <string name="selector_permission_error_easy_photos">权限错误，无法正常工作！</string>
+    <string name="selector_permission_error_easy_photos">Permission error, cannot work properly！</string>
 
-    <string name="selector_image_size_error_easy_photos">图片的宽度必须大于%1$d,高度必须大于%2$d</string>
+    <string name="selector_image_size_error_easy_photos">The width of the image must be greater than%1$d,the height must be greater than%2$d</string>
 
-    <string name="selector_image_type_error_easy_photos">不支持此图片格式</string>
+    <string name="selector_image_type_error_easy_photos">This image format is not supported</string>
 
-    <string name="edit_easy_photos">编辑</string>
+    <string name="edit_easy_photos">Edit</string>
 
-    <string name="empty_easy_photos">清空</string>
+    <string name="empty_easy_photos">Clean</string>
 
-    <string name="no_photos_easy_photos">没有符合要求的图片，拍一张吧</string>
+    <string name="no_photos_easy_photos">There is no picture that meets the requirements. Take one</string>
 
-    <string name="no_videos_easy_photos">没有符合要求的视频</string>
+    <string name="no_videos_easy_photos">There is no video that meets the requirements</string>
 
-    <string name="permissions_again_easy_photos">请点击并允许相关权限</string>
+    <string name="permissions_again_easy_photos">Please click and allow permissions</string>
 
-    <string name="permissions_die_easy_photos">请点击并在设置中允许相关权限</string>
+    <string name="permissions_die_easy_photos">Please click and allow permissions in Settings</string>
 
-    <string name="original_easy_photos">原图</string>
+    <string name="original_easy_photos">Original</string>
 
     <string name="preview_current_number_easy_photos">%1$d/%2$d</string>
 
-    <string name="done_easy_photos">完成</string>
+    <string name="done_easy_photos">OK</string>
 
-    <string name="cancel_easy_photos">取消</string>
+    <string name="cancel_easy_photos">Cancel</string>
 
-    <string name="template_easy_photos">模板</string>
+    <string name="template_easy_photos">Template</string>
 
-    <string name="text_sticker_easy_photos">文字</string>
+    <string name="text_sticker_easy_photos">Text</string>
 
-    <string name="text_sticker_date_easy_photos">日期</string>
+    <string name="text_sticker_date_easy_photos">Date</string>
 
-    <string name="text_sticker_hint_easy_photos">双击编辑</string>
+    <string name="text_sticker_hint_easy_photos">Double Click Editing</string>
 
-    <string name="text_sticker_hint_name_easy_photos">自定义</string>
+    <string name="text_sticker_hint_name_easy_photos">Custom</string>
 
-    <string name="picture_selection_easy_photos">图片选择</string>
+    <string name="picture_selection_easy_photos">Selection photos</string>
 
-    <string name="video_selection_easy_photos">视频选择</string>
+    <string name="video_selection_easy_photos">Video selection</string>
 
-    <string name="puzzle_easy_photos">拼一张</string>
+    <string name="puzzle_easy_photos">Puzzle</string>
 
-    <string name="select_puzzle_photos">请选择2 \- 9张照片</string>
+    <string name="select_puzzle_photos">Please select 2 \- 9 photos</string>
 
-    <string name="gif_easy_photos">动图</string>
+    <string name="gif_easy_photos">Gif</string>
 
-    <string name="video_easy_photos">视频</string>
-    <string name="custom_puzzle_confirm">完成</string>
-    <string name="custom_puzzle_cancel">取消</string>
-    <string name="select_album_single">选择图片</string>
+    <string name="video_easy_photos">Video</string>
+    <string name="custom_puzzle_confirm">Confirm</string>
+    <string name="custom_puzzle_cancel">Cancel</string>
+    <string name="select_album_single">Photos selection</string>
 
     <string name="filter_whitecat">WhiteCat</string>
     <string name="filter_blackcat">BlackCat</string>
@@ -157,11 +158,39 @@
     <string name="my_money_tx">My gold coin：</string>
     <string name="move_ad_btn">Remove advertis</string>
     <string name="look_movie">Get gold coin</string>
+    <string name="remove_ad_toast">Insufficient gold coins</string>
+    <string name="remove_ad_toast_success">Ads removed successfully</string>
+    <string name="image_save_toast">The picture has been saved</string>
+
+    <string name="encourage_toast">Thank you for your rating</string>
+
     <string name="exit_message">Are you sure to exit？</string>
-    <string name="yes">yes</string>
-    <string name="no">no</string>
+    <string name="check_update_message">It is the latest version, no need to update</string>
+    <string name="confirm">Confirm</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
 
     <string name="move_ad_1">1.Get 1 gold coins each time you watch the video</string>
     <string name="move_ad_2">2.Only 10 gold coins can remove advertisements</string>
     <string name="move_ad_3">3.Remove horizontal and insert ads</string>
+    <string name="splash_title">Design for beauty</string>
+    <string name="add">Add</string>
+    <string name="jigsaw_n_puzzle">Jigsaw puzzle</string>
+    <string name="free_nplay">Free Play</string>
+    <string name="privacy_policy">Privacy policy</string>
+    <string name="remove_advertising">Remove advertising</string>
+    <string name="check_for_updates">Check for updates</string>
+    <string name="encourage_us">Encourage us</string>
+    <string name="exit">Exit</string>
+    <string name="encourage_message">Can you give us a good comment? This will be very helpful to us.</string>
+    <string name="encourage_title">Encourage us</string>
+
+    <string name="up">Move up</string>
+    <string name="down">Move down</string>
+    <string name="up_fail_toast">The current image is already at the top level and cannot be moved up</string>
+    <string name="down_fail_toast">The current image is already the lowest level and cannot be moved down</string>
+    <string name="start">Start</string>
+    <string name="accept">Accept</string>
+    <string name="tv_privacy_policy"><u>Privacy policy</u></string>
+    <string name="toast_check_btn">Please check the consent privacy Policy button first</string>
 </resources>

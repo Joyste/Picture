@@ -8,6 +8,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.media.MediaScannerConnection;
@@ -17,6 +19,7 @@ import android.os.Environment;
 import android.util.Log;
 
 import com.seu.magicfilter.MagicEngine;
+import com.seu.magicfilter.utils.DialogUtil;
 import com.seu.magicfilter.utils.MagicParams;
 
 public class SavePictureTask extends AsyncTask<Bitmap, Integer, String>{
@@ -24,11 +27,19 @@ public class SavePictureTask extends AsyncTask<Bitmap, Integer, String>{
 	private OnPictureSaveListener onPictureSaveListener;
 	private File file;
 
+
+
 	public SavePictureTask(File file, OnPictureSaveListener listener){
 		this.onPictureSaveListener = listener;
 		this.file = file;
 	}
-	
+
+	@Override
+	protected void onCancelled() {
+		super.onCancelled();
+
+	}
+
 	@Override
 	protected void onPreExecute() {
 		super.onPreExecute();

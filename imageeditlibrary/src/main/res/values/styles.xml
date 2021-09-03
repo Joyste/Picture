@@ -3,4 +3,23 @@
         <item name="android:windowEnterAnimation">@anim/menushow</item>
         <item name="android:windowExitAnimation">@anim/menuhide</item>
     </style>
+
+    <style name="image_edit_menu_ll_style">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:layout_marginStart">@dimen/image_edit_menu_margin_vertical</item>
+        <item name="android:layout_marginEnd">@dimen/image_edit_menu_margin_vertical</item>
+        <item name="android:layout_marginTop">@dimen/image_edit_menu_margin_top</item>
+        <item name="android:layout_marginBottom">@dimen/image_edit_menu_margin_bottom</item>
+        <item name="android:orientation">vertical</item>
+        <item name="android:gravity">center_horizontal</item>
+
+    </style>
+
+    <style name="popwindow_anim_style">
+        <item name="android:windowEnterAnimation">@anim/popup_show</item>
+        <item name="android:windowExitAnimation">@anim/popup_gone</item>
+    </style>
+
 </resources>

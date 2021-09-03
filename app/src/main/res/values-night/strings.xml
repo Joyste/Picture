@@ -2,4 +2,13 @@
 <resources>
     <string name="app_new">NEW</string>
     <string name="my_money_tx">My gold coin：</string>
+    <string name="splash_title">Design for beauty</string>
+    <string name="add">Add</string>
+    <string name="jigsaw_n_puzzle">Jigsaw puzzle</string>
+    <string name="free_nplay">Free Play</string>
+    <string name="privacy_policy">Privacy policy</string>
+    <string name="start">Start</string>
+    <string name="accept">Accept</string>
+    <string name="tv_privacy_policy"><u>Privacy policy</u></string>
+    <string name="toast_check_btn">Please check the consent privacy Policy button first</string>
 </resources>

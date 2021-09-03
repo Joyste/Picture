@@ -1,5 +1,7 @@
 <resources>
     <color name="white">#ffffff</color>
+    <color name="black">#000000</color>
+    <color name="popwindow_background">#b3000000</color>
     <color name="main_backgroud">#333333</color>
     <color name="materialcolorpicker__white">#ffffff</color>
     <color name="materialcolorpicker__red">#f44336</color>
@@ -14,4 +16,25 @@
     <color name="hint_foreground_material_light">#00000000</color>
     <color name="hint_foreground_material_dark">#00000000</color>
     <color name="setting_back">#666666</color>
+    <color name="theme_color">#FE375D</color>
+    <color name="red">#FF0000</color>
+
+    <color name="color_list_1">#DDDDDD</color>
+    <color name="color_list_2">#CCCCCC</color>
+    <color name="color_list_3">#444444</color>
+    <color name="color_list_4">#000000</color>
+    <color name="color_list_5">#7A0400</color>
+    <color name="color_list_6">#CC0001</color>
+    <color name="color_list_7">#FF3737</color>
+    <color name="color_list_8">#FF7F00</color>
+    <color name="color_list_9">#ff9933</color>
+    <color name="color_list_10">#A3E401</color>
+    <color name="color_list_11">#7CAA0A</color>
+    <color name="color_list_12">#00BCD4</color>
+    <color name="color_list_13">#03A9F4</color>
+    <color name="color_list_14">#2196F3</color>
+    <color name="color_list_15">#3d5afe</color>
+
+    <color name="transparent">#00000000</color>
+    <color name="color_list_background">#26FFFFFF</color>
 </resources>

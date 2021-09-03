@@ -16,6 +16,7 @@ import android.util.DisplayMetrics;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
 
@@ -57,6 +58,9 @@ public class EditImageActivity extends BaseActivity {
     public static final String SAVE_FILE_PATH = "save_file_path";
 
     public static final String IMAGE_IS_EDIT = "image_is_edit";
+    public static final String RETURN_OPERATION_NAME = "the_operation_of_return";//0是返回，1是保存
+    public int RETURN_OPERATION = 0;//0是返回，1是保存
+
 
     public static final int MODE_NONE = 0;
     public static final int MODE_STICKERS = 1;// 贴图模式
@@ -109,6 +113,8 @@ public class EditImageActivity extends BaseActivity {
     private SaveImageTask mSaveImageTask;
 
     private RedoUndoController mRedoUndoController;//撤销操作
+    private LinearLayout redoUodoPanel;
+    private LinearLayout paintRedoUodoPanel;
 
     /**
      * @param context
@@ -167,10 +173,13 @@ public class EditImageActivity extends BaseActivity {
         });
 
         mStickerView = (StickerView) findViewById(R.id.sticker_panel);
+        mStickerView.setLayout(R.layout.activity_image_edit);
         mCropPanel = (CropImageView) findViewById(R.id.crop_panel);
         mRotatePanel = (RotateImageView) findViewById(R.id.rotate_panel);
         mTextStickerView = (TextStickerView) findViewById(R.id.text_sticker_panel);
         mPaintView = (CustomPaintView) findViewById(R.id.custom_paint_view);
+        redoUodoPanel = (LinearLayout) findViewById(R.id.redo_uodo_panel);
+        paintRedoUodoPanel = (LinearLayout) findViewById(R.id.paint_redo_uodo_panel);
 
         // 底部gallery
         bottomGallery = (CustomViewPager) findViewById(R.id.bottom_gallery);
@@ -210,6 +219,30 @@ public class EditImageActivity extends BaseActivity {
         if (mAddTextFragment.isAdded()) {
             mAddTextFragment.hideInput();
         }
+    }
+
+    /**
+     * 设置上下步的隐藏与显示。
+     * @param Visibility
+     */
+    public void setRedoUndoPanelVisibility(int Visibility){
+        redoUodoPanel.setVisibility(Visibility);
+    }
+
+    /**
+     * 设置画画的上下步的隐藏与显示。
+     * @param Visibility
+     */
+    public void setPaintRedoUndoPanelVisibility(int Visibility){
+        paintRedoUodoPanel.setVisibility(Visibility);
+    }
+
+    /**
+     * 返回画画的上下步
+     * @return
+     */
+    public LinearLayout getPaintRedoUodoPanel(){
+        return paintRedoUodoPanel;
     }
 
     /**
@@ -311,17 +344,18 @@ public class EditImageActivity extends BaseActivity {
         }// end switch
 
         if (canAutoExit()) {
+            RETURN_OPERATION = 0;
             onSaveTaskDone();
         } else {//图片还未被保存    弹出提示框确认
             AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
             alertDialogBuilder.setMessage(R.string.exit_without_save)
-                    .setCancelable(false).setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
+                    .setCancelable(false).setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    doSaveImage();
+                }
+            }).setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int id) {
                     mContext.finish();
-                }
-            }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int id) {
-                    dialog.cancel();
                 }
             });
 
@@ -378,6 +412,7 @@ public class EditImageActivity extends BaseActivity {
         @Override
         public void onClick(View v) {
             if (mOpTimes == 0) {//并未修改图片
+                RETURN_OPERATION = 1;
                 onSaveTaskDone();
             } else {
                 doSaveImage();
@@ -450,6 +485,7 @@ public class EditImageActivity extends BaseActivity {
         returnIntent.putExtra(FILE_PATH, filePath);
         returnIntent.putExtra(EXTRA_OUTPUT, saveFilePath);
         returnIntent.putExtra(IMAGE_IS_EDIT, mOpTimes > 0);
+        returnIntent.putExtra(RETURN_OPERATION_NAME,RETURN_OPERATION);
 
         FileUtil.ablumUpdate(this, saveFilePath);
         setResult(RESULT_OK, returnIntent);

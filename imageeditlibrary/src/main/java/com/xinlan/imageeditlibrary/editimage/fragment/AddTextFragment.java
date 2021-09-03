@@ -1,6 +1,7 @@
 package com.xinlan.imageeditlibrary.editimage.fragment;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -8,6 +9,8 @@ import android.graphics.Matrix;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -22,7 +25,9 @@ import com.xinlan.imageeditlibrary.R;
 import com.xinlan.imageeditlibrary.editimage.EditImageActivity;
 import com.xinlan.imageeditlibrary.editimage.ModuleConfig;
 import com.xinlan.imageeditlibrary.editimage.task.StickerTask;
+import com.xinlan.imageeditlibrary.editimage.ui.AddTextPopupWindow;
 import com.xinlan.imageeditlibrary.editimage.ui.ColorPicker;
+import com.xinlan.imageeditlibrary.editimage.utils.DoubleClickListener;
 import com.xinlan.imageeditlibrary.editimage.view.TextStickerView;
 
 
@@ -31,22 +36,25 @@ import com.xinlan.imageeditlibrary.editimage.view.TextStickerView;
  *
  * @author 潘易
  */
-public class AddTextFragment extends BaseEditFragment implements TextWatcher {
+public class AddTextFragment extends BaseEditFragment {
     public static final int INDEX = ModuleConfig.INDEX_ADDTEXT;
     public static final String TAG = AddTextFragment.class.getName();
 
     private View mainView;
     private View backToMenu;// 返回主菜单
+    private View rootView;
 
     private EditText mInputText;//输入框
     private ImageView mTextColorSelector;//颜色选择器
     private TextStickerView mTextStickerView;// 文字贴图显示控件
-    private CheckBox mAutoNewLineCheck;
+    private AddTextPopupWindow addTextPopupWindow;
+
 
     private ColorPicker mColorPicker;
 
     private int mTextColor = Color.WHITE;
     private InputMethodManager imm;
+    private boolean isBack = false;
 
     private SaveTextStickerTask mSaveTask;
 
@@ -77,35 +85,19 @@ public class AddTextFragment extends BaseEditFragment implements TextWatcher {
         backToMenu = mainView.findViewById(R.id.back_to_main);
         mInputText = (EditText) mainView.findViewById(R.id.text_input);
         mTextColorSelector = (ImageView) mainView.findViewById(R.id.text_color);
-        mAutoNewLineCheck = (CheckBox) mainView.findViewById(R.id.check_auto_newline);
 
         backToMenu.setOnClickListener(new BackToMenuClick());// 返回主菜单
         mColorPicker = new ColorPicker(getActivity(), 255, 0, 0);
         mTextColorSelector.setOnClickListener(new SelectColorBtnClick());
-        mInputText.addTextChangedListener(this);
-        mTextStickerView.setEditText(mInputText);
+
 
         //统一颜色设置
         mTextColorSelector.setBackgroundColor(mColorPicker.getColor());
         mTextStickerView.setTextColor(mColorPicker.getColor());
+        mTextStickerView.setEditText(mInputText);
     }
 
-    @Override
-    public void afterTextChanged(Editable s) {
-        //mTextStickerView change
-        String text = s.toString().trim();
-        mTextStickerView.setText(text);
-    }
 
-    @Override
-    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-    }
-
-    @Override
-    public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-    }
 
     /**
      * 颜色选择 按钮点击
@@ -164,12 +156,28 @@ public class AddTextFragment extends BaseEditFragment implements TextWatcher {
      */
     @Override
     public void backToMain() {
+        if(mInputText.getText().toString().length() >0){
+            showAlertDialog(getContext(), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    isBack = true;
+                    applyTextImage();
+                }
+            }, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+        }
+        mInputText.setText(null);
         hideInput();
         activity.mode = EditImageActivity.MODE_NONE;
         activity.bottomGallery.setCurrentItem(MainMenuFragment.INDEX);
         activity.mainImage.setVisibility(View.VISIBLE);
         activity.bannerFlipper.showPrevious();
         mTextStickerView.setVisibility(View.GONE);
+        activity.setRedoUndoPanelVisibility(View.VISIBLE);
     }
 
     @Override
@@ -179,6 +187,24 @@ public class AddTextFragment extends BaseEditFragment implements TextWatcher {
         activity.bannerFlipper.showNext();
         mTextStickerView.setVisibility(View.VISIBLE);
         mInputText.clearFocus();
+        activity.setRedoUndoPanelVisibility(View.INVISIBLE);
+        addTextPopupWindow = new AddTextPopupWindow(getContext(), new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                hideInput();
+                addTextPopupWindow.dismiss();
+            }
+        },mTextStickerView);
+        rootView = LayoutInflater.from(getActivity())
+                .inflate(R.layout.activity_image_edit, null);
+        addTextPopupWindow.showAtLocation(rootView, Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL, 0, 0);
+
+        mTextStickerView.setOnClickListener(new DoubleClickListener() {
+            @Override
+            public void onMultiClick(View v) {
+                addTextPopupWindow.showAtLocation(rootView, Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL, 0, 0);
+            }
+        });
     }
 
     /**
@@ -227,7 +253,11 @@ public class AddTextFragment extends BaseEditFragment implements TextWatcher {
             mTextStickerView.resetView();
 
             activity.changeMainBitmap(result , true);
-            backToMain();
+            if(!isBack){
+                backToMain();
+                isBack = false;
+            }
+
         }
     }//end inner class
 

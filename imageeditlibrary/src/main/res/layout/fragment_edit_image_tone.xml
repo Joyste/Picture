@@ -37,7 +37,8 @@
             android:id="@+id/back_to_main"
             android:layout_width="40dp"
             android:layout_height="wrap_content"
-            android:src="@drawable/image_edit_back" />
+            android:src="@drawable/image_edit_back"
+            android:visibility="gone"/>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/tone_list"
@@ -48,19 +49,5 @@
             android:scrollbars="none"/>
 
     </LinearLayout>
-
-
-<!--    <HorizontalScrollView-->
-<!--        android:layout_width="fill_parent"-->
-<!--        android:layout_height="fill_parent"-->
-<!--        android:layout_weight="1" >-->
-
-<!--        <LinearLayout-->
-<!--            android:id="@+id/tone_list_group"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="fill_parent"-->
-<!--            android:orientation="horizontal" >-->
-<!--        </LinearLayout>-->
-<!--    </HorizontalScrollView>-->
 
 </LinearLayout>

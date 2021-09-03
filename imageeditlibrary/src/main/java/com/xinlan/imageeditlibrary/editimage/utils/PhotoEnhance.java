@@ -114,7 +114,12 @@ public class PhotoEnhance {
      * @param hueNum (范围 : 0 ~ 255)
      */
     public PhotoEnhance setHue(int hueNum) {
-        mHueNum = (hueNum - 128) * 1.0f / 128 * 180;
+        if(hueNum >= 128){
+            mHueNum = hueNum * 1.0f / 128 ;
+        }else {
+            mHueNum = (256 - hueNum) * 1.0f / 128;
+            mHueNum = -mHueNum;
+        }
         return this;
     }
 
@@ -216,10 +221,14 @@ public class PhotoEnhance {
 
             case ENHANCE_HUE: {
                 mHueMatrix.reset();
-                mHueMatrix.setRotate(0, mHueNum); // 控制让红色区在色轮上旋转的角度
-                mHueMatrix.setRotate(1, mHueNum); // 控制让绿红色区在色轮上旋转的角度
-                mHueMatrix.setRotate(2, mHueNum); // 控制让蓝色区在色轮上旋转的角度
-                // 这里相当于改变的是全图的色相
+                if(mHueNum>=0){
+                    mHueNum = (mHueNum - 1) / 3 + 1;
+                    mHueMatrix.set(new float[]{mHueNum, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0.8f, 0});
+                }else {
+                    mHueNum = -mHueNum;
+                    mHueNum = (mHueNum - 1) / 3 + 1;
+                    mHueMatrix.set(new float[]{1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, mHueNum, 0, 0, 0, 0, 0, 0.8f, 0});
+                }
                 break;
             }
 

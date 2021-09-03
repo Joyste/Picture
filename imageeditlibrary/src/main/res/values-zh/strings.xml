@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">编辑图片</string>
+    <string name="app_name">Beauty Camera</string>
     <string name="no_images">没有发现图片</string>
     <string name="images">%d 张图片</string>
     <string name="save">保存</string>
@@ -17,7 +17,7 @@
     <string name="materialcolorpicker__inputColor">颜色:</string>
     <string name="materialcolorpicker__btnSelectColor">选择</string>
     <string name="saving_image">图片保存中...</string>
-    <string name="input_hint">输入文本 ...</string>
+    <string name="input_hint">请输入文本</string>
     <string name="no_choose">请选择一张需要编辑的图片</string>
     <string name="auto_newline">自动换行</string>
     <string name="save_error">图片保存失败</string>
@@ -26,9 +26,9 @@
     <string name="luminance">亮度</string>
     <string name="contrast">对比度</string>
     <string name="saturation">饱和度</string>
-    <string name="hue">色相</string>
+    <string name="hue">色温</string>
     <string name="exposure">曝光</string>
-    <string name="hint_seekbar_value">0</string>
+    <string name="hint_seekbar_value">20</string>
     <string-array name="filters">
         <item>原始</item>
         <item>软化</item>
@@ -46,11 +46,23 @@
     </string-array>
 
     <string name="more">更多</string>
-    <string name="exit_without_save">编辑的图片还未保存,确认退出吗？</string>
-    <string name="confirm">确认</string>
+    <string name="exit_without_save">编辑的图片还未保存,是否要保存?</string>
+    <string name="exit_without_apply">编辑的图片还未应用,是否要应用? </string>
+    <string name="confirm">确定</string>
     <string name="cancel">取消</string>
+    <string name="yes">是</string>
+    <string name="no">否</string>
 
+    <string name="up">上移</string>
+    <string name="down">下移</string>
+    <string name="up_fail_toast">当前图片已经是最顶层了，无法上移</string>
+    <string name="down_fail_toast">当前图片已经是最底层了，无法下移</string>
+
+    <string name="custom">自定义</string>
+    <string name="original">原始</string>
     <string name="beauty">美颜</string>
     <string name="smooth">磨皮</string>
     <string name="white_skin">美白</string>
+    <string name="rotate_seekbar_value">0°</string>
+    <string name="add_text_hint">请输入文字</string>
 </resources>

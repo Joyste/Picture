@@ -1,14 +1,24 @@
 package com.xinlan.imageeditlibrary.editimage.model;
 
 public class RatioItem {
+	private int icon;
 	private String text;
 	private Float ratio;
 	private int index;
 
-	public RatioItem(String text, Float ratio) {
+	public RatioItem(int icon,String text, Float ratio) {
 		super();
+		this.icon = icon;
 		this.text = text;
 		this.ratio = ratio;
+	}
+
+	public int getIcon() {
+		return icon;
+	}
+
+	public void setIcon(int icon) {
+		this.icon = icon;
 	}
 
 	public String getText() {
@@ -26,7 +36,6 @@ public class RatioItem {
 	public void setRatio(Float ratio) {
 		this.ratio = ratio;
 	}
-	
 
 	public int getIndex() {
 		return index;

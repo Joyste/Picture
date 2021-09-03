@@ -112,7 +112,9 @@
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
             android:clickable="true"
-            android:text="@string/materialcolorpicker__btnSelectColor"/>
+            android:background="@drawable/shape_rect_2"
+            android:text="@string/materialcolorpicker__btnSelectColor"
+            android:textColor="@color/white"/>
 
     </RelativeLayout>
 

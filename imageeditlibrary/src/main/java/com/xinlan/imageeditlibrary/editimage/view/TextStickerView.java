@@ -82,6 +82,7 @@ public class TextStickerView extends View {
     private List<String> mTextContents = new ArrayList<String>(2);//存放所写的文字内容
     private String mText;
 
+
     private Point mPoint = new Point(0,0);
 
     public TextStickerView(Context context) {
@@ -109,7 +110,7 @@ public class TextStickerView extends View {
         mDeleteBitmap = BitmapFactory.decodeResource(context.getResources(),
                 R.drawable.sticker_delete);
         mRotateBitmap = BitmapFactory.decodeResource(context.getResources(),
-                R.drawable.sticker_rotate);
+                R.drawable.ico_sticker_rotate);
 
         mDeleteRect.set(0, 0, mDeleteBitmap.getWidth(), mDeleteBitmap.getHeight());
         mRotateRect.set(0, 0, mRotateBitmap.getWidth(), mRotateBitmap.getHeight());

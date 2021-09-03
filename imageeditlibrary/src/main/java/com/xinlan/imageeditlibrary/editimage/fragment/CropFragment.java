@@ -7,28 +7,35 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Dialog;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.RectF;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.xinlan.imageeditlibrary.BaseActivity;
 import com.xinlan.imageeditlibrary.R;
 import com.xinlan.imageeditlibrary.editimage.EditImageActivity;
 import com.xinlan.imageeditlibrary.editimage.ModuleConfig;
+import com.xinlan.imageeditlibrary.editimage.adapter.CropListAdapter;
 import com.xinlan.imageeditlibrary.editimage.model.RatioItem;
+import com.xinlan.imageeditlibrary.editimage.model.appInfo;
 import com.xinlan.imageeditlibrary.editimage.utils.Matrix3;
 import com.xinlan.imageeditlibrary.editimage.view.CropImageView;
 import com.xinlan.imageeditlibrary.editimage.view.imagezoom.ImageViewTouchBase;
@@ -46,27 +53,17 @@ public class CropFragment extends BaseEditFragment {
 	private View mainView;
 	private View backToMenu;// 返回主菜单
 	public CropImageView mCropPanel;// 剪裁操作面板
-	private LinearLayout ratioList;
-	private static List<RatioItem> dataList = new ArrayList<RatioItem>();
-	static {
-		// init data
-		dataList.add(new RatioItem("none", -1f));
-		dataList.add(new RatioItem("1:1", 1f));
-		dataList.add(new RatioItem("1:2", 1 / 2f));
-		dataList.add(new RatioItem("1:3", 1 / 3f));
-		dataList.add(new RatioItem("2:3", 2 / 3f));
-		dataList.add(new RatioItem("3:4", 3 / 4f));
-		dataList.add(new RatioItem("2:1", 2f));
-		dataList.add(new RatioItem("3:1", 3f));
-		dataList.add(new RatioItem("3:2", 3 / 2f));
-		dataList.add(new RatioItem("4:3", 4 / 3f));
-	}
-	private List<TextView> textViewList = new ArrayList<TextView>();
+	private RecyclerView mCropListView;
+	private CropListAdapter mCropListAdapter;
+	private TextView tvCropName;
+	private ImageView ivCropIcon;
 
-	public static int SELECTED_COLOR = Color.YELLOW;
-	public static int UNSELECTED_COLOR = Color.WHITE;
-	private CropRationClick mCropRationClick = new CropRationClick();
-	public TextView selctedTextView;
+	private View currentItem;
+	private int currentPosition;
+	private int icoNormal[] = {R.drawable.ico_custom_selected,R.drawable.ico_original_normal,R.drawable.ico_1_1_normal,R.drawable.ico_9_16_normal,R.drawable.ico_16_9_normal,R.drawable.ico_2_3_normal,R.drawable.ico_3_2_normal,R.drawable.ico_4_3_normal,R.drawable.ico_3_4_normal};
+	private static boolean defaultSelectedItem;
+
+	private List<RatioItem> dataList = new ArrayList<RatioItem>();
 
 	public static CropFragment newInstance() {
 		CropFragment fragment = new CropFragment();
@@ -85,66 +82,63 @@ public class CropFragment extends BaseEditFragment {
 		return mainView;
 	}
 
-	private void setUpRatioList() {
-		// init UI
-		ratioList.removeAllViews();
-		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-				LinearLayout.LayoutParams.WRAP_CONTENT,
-				LinearLayout.LayoutParams.WRAP_CONTENT);
-		params.gravity = Gravity.CENTER_VERTICAL;
-		params.leftMargin = 20;
-		params.rightMargin = 20;
-		for (int i = 0, len = dataList.size(); i < len; i++) {
-			TextView text = new TextView(activity);
-			text.setTextColor(UNSELECTED_COLOR);
-			text.setTextSize(20);
-			text.setText(dataList.get(i).getText());
-			textViewList.add(text);
-			ratioList.addView(text, params);
-			text.setTag(i);
-			if (i == 0) {
-				selctedTextView = text;
-			}
-			dataList.get(i).setIndex(i);
-			text.setTag(dataList.get(i));
-			text.setOnClickListener(mCropRationClick);
-		}// end for i
-		selctedTextView.setTextColor(SELECTED_COLOR);
-	}
-
-	/**
-	 * 选择剪裁比率
-	 * 
-	 * @author
-	 * 
-	 */
-	private final class CropRationClick implements OnClickListener {
-		@Override
-		public void onClick(View v) {
-			TextView curTextView = (TextView) v;
-			selctedTextView.setTextColor(UNSELECTED_COLOR);
-			RatioItem dataItem = (RatioItem) v.getTag();
-			selctedTextView = curTextView;
-			selctedTextView.setTextColor(SELECTED_COLOR);
-
-			mCropPanel.setRatioCropRect(activity.mainImage.getBitmapRect(),
-					dataItem.getRatio());
-			// System.out.println("dataItem   " + dataItem.getText());
-		}
-	}// end inner class
-
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 
         backToMenu = mainView.findViewById(R.id.back_to_main);
-        ratioList = (LinearLayout) mainView.findViewById(R.id.ratio_list_group);
-        setUpRatioList();
+        mCropListView = mainView.findViewById(R.id.crop_list);
+
+		initData();
+		initCropListView();
+
         this.mCropPanel = ensureEditActivity().mCropPanel;
 		backToMenu.setOnClickListener(new BackToMenuClick());// 返回主菜单
 	}
 
-    @Override
+	/**
+	 * 初始化Item数据
+	 */
+	private void initData() {
+		dataList.clear();
+		RectF r = activity.mainImage.getBitmapRect();
+		float bitmapRatio = r.width()/r.height();
+		dataList.add(new RatioItem(icoNormal[0],getActivity().getResources().getString(R.string.custom), -1f));
+		dataList.add(new RatioItem(icoNormal[1],getActivity().getResources().getString(R.string.original), bitmapRatio));
+		dataList.add(new RatioItem(icoNormal[2],"1:1",1f));
+		dataList.add(new RatioItem(icoNormal[3],"9:16", 9 / 16f));
+		dataList.add(new RatioItem(icoNormal[4],"16:9", 16 / 9f));
+		dataList.add(new RatioItem(icoNormal[5],"2:3", 2 / 3f));
+		dataList.add(new RatioItem(icoNormal[6],"3:2", 3 / 2f));
+		dataList.add(new RatioItem(icoNormal[7],"4:3", 4 / 3f));
+		dataList.add(new RatioItem(icoNormal[8],"3:4", 3 / 4f));
+	}
+
+	/**
+	 * 初始化recycleView
+	 */
+	private void initCropListView() {
+
+		mCropListView.setHasFixedSize(false);
+
+		LinearLayoutManager stickerListLayoutManager = new LinearLayoutManager(activity);
+		stickerListLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
+		mCropListView.setLayoutManager(stickerListLayoutManager);
+
+		mCropListAdapter = new CropListAdapter(getContext(), dataList);
+		mCropListAdapter.setOnItemClickListener(new CropListAdapter.OnItemClickListener() {
+			@SuppressLint("ResourceAsColor")
+			@Override
+			public void onItemClick(View itemView, int position) {
+				RatioItem dataItem = (RatioItem) itemView.getTag();
+				mCropPanel.setRatioCropRect(activity.mainImage.getBitmapRect(), dataItem.getRatio());
+			}
+		});
+		mCropListView.setAdapter(mCropListAdapter);
+	}
+
+
+	@Override
     public void onShow() {
         activity.mode = EditImageActivity.MODE_CROP;
 
@@ -152,11 +146,8 @@ public class CropFragment extends BaseEditFragment {
         activity.mainImage.setImageBitmap(activity.getMainBit());
         activity.mainImage.setDisplayType(ImageViewTouchBase.DisplayType.FIT_TO_SCREEN);
         activity.mainImage.setScaleEnabled(false);// 禁用缩放
-        // System.out.println(r.left + "    " + r.top);
         activity.bannerFlipper.showNext();
-
-		//  bug  fixed  https://github.com/siwangqishiq/ImageEditor-Android/issues/59
-		// 设置完与屏幕匹配的尺寸  确保变换矩阵设置生效后才设置裁剪区域
+		activity.setRedoUndoPanelVisibility(View.INVISIBLE);
 		activity.mainImage.post(new Runnable() {
 			@Override
 			public void run() {
@@ -188,11 +179,9 @@ public class CropFragment extends BaseEditFragment {
 		mCropPanel.setVisibility(View.GONE);
 		activity.mainImage.setScaleEnabled(true);// 恢复缩放功能
 		activity.bottomGallery.setCurrentItem(0);
-		if (selctedTextView != null) {
-			selctedTextView.setTextColor(UNSELECTED_COLOR);
-		}
 		mCropPanel.setRatioCropRect(activity.mainImage.getBitmapRect(), -1);
 		activity.bannerFlipper.showPrevious();
+		activity.setRedoUndoPanelVisibility(View.VISIBLE);
 	}
 
 	/**
@@ -248,17 +237,10 @@ public class CropFragment extends BaseEditFragment {
 			m.setValues(inverseMatrix.getValues());
 			m.mapRect(cropRect);// 变化剪切矩形
 
-			// Paint paint = new Paint();
-			// paint.setColor(Color.RED);
-			// paint.setStrokeWidth(10);
-			// canvas.drawRect(cropRect, paint);
-			// Bitmap resultBit = Bitmap.createBitmap(params[0]).copy(
-			// Bitmap.Config.ARGB_8888, true);
 			Bitmap resultBit = Bitmap.createBitmap(params[0],
 					(int) cropRect.left, (int) cropRect.top,
 					(int) cropRect.width(), (int) cropRect.height());
 
-			//saveBitmap(resultBit, activity.saveFilePath);
 			return resultBit;
 		}
 
@@ -295,6 +277,5 @@ public class CropFragment extends BaseEditFragment {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		// System.out.println("保存文件--->" + f.getAbsolutePath());
 	}
 }// end class

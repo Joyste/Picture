@@ -1,5 +1,6 @@
 package com.xinlan.imageeditlibrary.editimage.fragment;
 
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Rect;
@@ -12,6 +13,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
+import android.widget.TextView;
 
 import com.xinlan.imageeditlibrary.R;
 import com.xinlan.imageeditlibrary.editimage.EditImageActivity;
@@ -30,6 +32,7 @@ public class RotateFragment extends BaseEditFragment {
     public static final String TAG = RotateFragment.class.getName();
     private View mainView;
     private View backToMenu;// 返回主菜单
+    private TextView mSeekBarValue;
     public SeekBar mSeekBar;// 角度设定
     private RotateImageView mRotatePanel;// 旋转效果展示控件
 
@@ -56,6 +59,7 @@ public class RotateFragment extends BaseEditFragment {
 
         backToMenu = mainView.findViewById(R.id.back_to_main);
         mSeekBar = (SeekBar) mainView.findViewById(R.id.rotate_bar);
+        mSeekBarValue = mainView.findViewById(R.id.rotate_bar_value);
         mSeekBar.setProgress(0);
 
         this.mRotatePanel = ensureEditActivity().mRotatePanel;
@@ -76,6 +80,7 @@ public class RotateFragment extends BaseEditFragment {
         activity.mRotatePanel.reset();
         activity.mRotatePanel.setVisibility(View.VISIBLE);
         activity.bannerFlipper.showNext();
+        activity.setRedoUndoPanelVisibility(View.INVISIBLE);
     }
 
     /**
@@ -89,6 +94,8 @@ public class RotateFragment extends BaseEditFragment {
                                       boolean fromUser) {
             // System.out.println("progress--->" + progress);
             mRotatePanel.rotateImage(angle);
+            mSeekBarValue.setText(String.valueOf(angle)+"°");
+
         }
 
         @Override
@@ -119,11 +126,31 @@ public class RotateFragment extends BaseEditFragment {
      */
     @Override
     public void backToMain() {
+        if(mSeekBar.getProgress() != 0 && mSeekBar.getProgress() != 360){
+            showAlertDialog(getContext(), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    applyRotateImage();
+                }
+            }, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                    back();
+                }
+            });
+        }else if (mSeekBar.getProgress() == 0 || mSeekBar.getProgress() == 360) {
+            back();
+        }
+    }
+
+    private void back(){
         activity.mode = EditImageActivity.MODE_NONE;
         activity.bottomGallery.setCurrentItem(0);
         activity.mainImage.setVisibility(View.VISIBLE);
         this.mRotatePanel.setVisibility(View.GONE);
         activity.bannerFlipper.showPrevious();
+        activity.setRedoUndoPanelVisibility(View.VISIBLE);
     }
 
     /**
@@ -132,7 +159,7 @@ public class RotateFragment extends BaseEditFragment {
     public void applyRotateImage() {
         // System.out.println("保存旋转图片");
         if (mSeekBar.getProgress() == 0 || mSeekBar.getProgress() == 360) {// 没有做旋转
-            backToMain();
+            back();
             return;
         } else {// 保存图片
             SaveRotateImageTask task = new SaveRotateImageTask();
@@ -204,7 +231,7 @@ public class RotateFragment extends BaseEditFragment {
 
             // 切换新底图
             activity.changeMainBitmap(result,true);
-            backToMain();
+            back();
         }
     }// end inner class
 }// end class

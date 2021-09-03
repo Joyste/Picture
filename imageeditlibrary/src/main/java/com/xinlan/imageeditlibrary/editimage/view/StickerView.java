@@ -10,10 +10,16 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.util.AttributeSet;
+import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Toast;
 
+import com.xinlan.imageeditlibrary.R;
 import com.xinlan.imageeditlibrary.editimage.utils.RectUtil;
+import com.xinlan.imageeditlibrary.editimage.widget.EditStickerPopupWindow;
 
 /**
  * 贴图操作控件
@@ -25,6 +31,17 @@ public class StickerView extends View {
     private static int STATUS_MOVE = 1;// 移动状态
     private static int STATUS_DELETE = 2;// 删除状态
     private static int STATUS_ROTATE = 3;// 图片旋转状态
+    private static int STATUS_EDIT = 4;// 图片移动状态
+    private int deleteId = -1;
+    private int layout = -1;
+
+    public int getLayout() {
+        return layout;
+    }
+
+    public void setLayout(int layout) {
+        this.layout = layout;
+    }
 
     private int imageCount;// 已加入照片的数量
     private Context mContext;
@@ -34,6 +51,7 @@ public class StickerView extends View {
 
     private Paint rectPaint = new Paint();
     private Paint boxPaint = new Paint();
+    private EditStickerPopupWindow editStickerPopupWindow;
 
     private LinkedHashMap<Integer, StickerItem> bank = new LinkedHashMap<Integer, StickerItem>();// 存贮每层贴图数据
 
@@ -101,8 +119,6 @@ public class StickerView extends View {
         float y = event.getY();
         switch (action & MotionEvent.ACTION_MASK) {
             case MotionEvent.ACTION_DOWN:
-
-                int deleteId = -1;
                 for (Integer id : bank.keySet()) {
                     StickerItem item = bank.get(id);
                     if (item.detectDeleteRect.contains(x, y)) {// 删除模式
@@ -119,6 +135,9 @@ public class StickerView extends View {
                         currentStatus = STATUS_ROTATE;
                         oldx = x;
                         oldy = y;
+                    } else if (item.detectEditRect.contains(x, y)) {// 点击了编辑按钮
+                        deleteId = id;
+                        currentStatus = STATUS_EDIT;
                     } else if (detectInItemContent(item , x , y)) {// 移动模式
                         // 被选中一张贴图
                         ret = true;
@@ -139,12 +158,55 @@ public class StickerView extends View {
                     invalidate();
                 }
 
+
+
                 if (deleteId > 0 && currentStatus == STATUS_DELETE) {// 删除选定贴图
                     bank.remove(deleteId);
                     currentStatus = STATUS_IDLE;// 返回空闲状态
                     invalidate();
                 }// end if
 
+                if (deleteId > 0 && currentStatus == STATUS_EDIT) {// 编辑选定贴图
+                    editStickerPopupWindow = new EditStickerPopupWindow(mContext, new OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Log.d("====", String.valueOf(deleteId));
+                            if(deleteId == bank.size()){
+                                Toast.makeText(mContext,mContext.getResources().getString(R.string.up_fail_toast),Toast.LENGTH_SHORT).show();
+                            }else {
+                                StickerItem stickerItem = bank.get(deleteId + 1);
+                                StickerItem nowStickerItem = bank.get(deleteId);
+                                bank.put(deleteId + 1,nowStickerItem);
+                                bank.put(deleteId,stickerItem);
+                                deleteId +=1;
+                                currentStatus = STATUS_IDLE;// 返回空闲状态
+                                invalidate();
+                            }
+
+                            editStickerPopupWindow.dismiss();
+                        }
+                    }, new OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            if(deleteId == 1){
+                                Toast.makeText(mContext,mContext.getResources().getString(R.string.down_fail_toast),Toast.LENGTH_SHORT).show();
+                            }else {
+                                StickerItem stickerItem = bank.get(deleteId - 1);
+                                StickerItem nowStickerItem = bank.get(deleteId);
+                                bank.put(deleteId - 1,nowStickerItem);
+                                bank.put(deleteId,stickerItem);
+                                deleteId -=1;
+                                currentStatus = STATUS_IDLE;// 返回空闲状态
+                                invalidate();
+                            }
+                            editStickerPopupWindow.dismiss();
+                        }
+                    });
+                    if (layout!=-1){
+                        View rootView = LayoutInflater.from(mContext).inflate(layout, null);
+                        editStickerPopupWindow.showAtLocation(rootView, Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL, 0, 0);
+                    }
+                }// end if
                 break;
             case MotionEvent.ACTION_MOVE:
                 ret = true;

@@ -2,25 +2,23 @@ package com.seu.magicfilter.camera;
 
 import java.io.IOException;
 
-import android.app.Activity;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
 import android.hardware.Camera.CameraInfo;
 import android.hardware.Camera.Parameters;
 import android.hardware.Camera.Size;
-import android.view.Surface;
+import android.util.Log;
 import android.view.SurfaceView;
 
 import com.seu.magicfilter.camera.utils.CameraUtils;
-import com.seu.magicfilter.utils.MagicParams;
-
-import static com.seu.magicfilter.widget.MagicCameraView.calculateCameraPreviewOrientation;
 
 public class CameraEngine {
     private static Camera camera = null;
     private static int cameraID = 0;
     private static SurfaceTexture surfaceTexture;
     private static SurfaceView surfaceView;
+
+
 
     public static void setCamera(Camera camera) {
         CameraEngine.camera = camera;
@@ -70,11 +68,38 @@ public class CameraEngine {
         }
     }
 
+    public static void setCameraPictureSize(float ratio){
+        int width = camera.getParameters().getPictureSize().width;
+        camera.getParameters().setPictureSize(width,(int)(width*ratio));
+    }
+
+    public static void switchFlashLight(int level){
+        if(camera != null){
+            Parameters mParameters = camera.getParameters();
+            switch (level){
+                case 0: {
+                    mParameters.setFlashMode(Parameters.FLASH_MODE_OFF);
+                    break;
+                }
+                case 1: {
+                    mParameters.setFlashMode(Parameters.FLASH_MODE_AUTO);
+                    break;
+                }
+                case 2: {
+                    mParameters.setFlashMode(Parameters.FLASH_MODE_ON);
+                    break;
+                }
+            }
+            camera.setParameters(mParameters);
+        }
+    }
+
+
     public void resumeCamera(){
         openCamera();
     }
 
-    public void setParameters(Parameters parameters){
+    public static void setParameters(Parameters parameters){
         camera.setParameters(parameters);
     }
 
@@ -97,10 +122,13 @@ public class CameraEngine {
                 Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE)) {
             parameters.setFocusMode(Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
         }
-        Size previewSize = CameraUtils.getLargePreviewSize(camera);
-        parameters.setPreviewSize(previewSize.width, previewSize.height);
         Size pictureSize = CameraUtils.getLargePictureSize(camera);
         parameters.setPictureSize(pictureSize.width, pictureSize.height);
+        Size previewSize = CameraUtils.getLargePreviewSize(camera);
+        parameters.setPreviewSize(previewSize.width, previewSize.height);
+
+
+        Log.d("previewSizepictureSize","previewSize = "+previewSize.width+","+previewSize.height+",pictureSize="+pictureSize.width+","+pictureSize.height);
         parameters.setRotation(90);
         camera.setParameters(parameters);
     }

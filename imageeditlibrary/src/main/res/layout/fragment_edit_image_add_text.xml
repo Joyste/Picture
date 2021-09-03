@@ -7,7 +7,9 @@
         android:layout_width="40dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
-        android:src="@drawable/image_edit_back"/>
+        android:src="@drawable/image_edit_back"
+        android:visibility="gone"/>
+
     <EditText
         android:id="@+id/text_input"
         android:layout_width="0dp"
@@ -16,26 +18,36 @@
         android:layout_margin="18dp"
         android:layout_weight="1"
         android:hint="@string/input_hint"
+        android:background="@drawable/edittext_bg_selector"
         android:paddingLeft="8dp"
-        android:textColor="@color/white"
-        android:textColorHint="@color/white"/>
+        android:textColor="@color/black"
+        android:textColorHint="@color/materialcolorpicker__grey"
+        android:textCursorDrawable="@drawable/solid_shape_bottom_line"
+        android:visibility="gone"
+        />
 
-    <CheckBox
-        android:id="@+id/check_auto_newline"
+
+    <FrameLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
-        android:layout_margin="3dp"
-        android:text="@string/auto_newline"
-        android:textColor="@color/white"
-        android:visibility="gone"/>
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="15dp"
+        android:visibility="gone"
+        >
 
-    <ImageView
-        android:id="@+id/text_color"
-        android:layout_width="25dp"
-        android:layout_height="25dp"
-        android:layout_gravity="center_vertical"
-        android:layout_margin="10dp"
-        android:background="#ffffff"/>
+
+        <ImageView
+            android:id="@+id/text_color"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:background="#ffffff"/>
+
+        <ImageView
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:background="@drawable/ico_add_text_color_background"/>
+    </FrameLayout>
+
 
 </LinearLayout>

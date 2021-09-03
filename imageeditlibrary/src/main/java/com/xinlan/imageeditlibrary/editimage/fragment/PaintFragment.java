@@ -14,9 +14,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.SeekBar;
+import android.widget.TextView;
 
 import com.xinlan.imageeditlibrary.R;
 import com.xinlan.imageeditlibrary.editimage.EditImageActivity;
@@ -45,6 +48,8 @@ public class PaintFragment extends BaseEditFragment implements View.OnClickListe
     private RecyclerView mColorListView;//颜色列表View
     private ColorListAdapter mColorAdapter;
     private View popView;
+    private Bitmap bitmap;
+
 
     private CustomPaintView mPaintView;
 
@@ -52,16 +57,24 @@ public class PaintFragment extends BaseEditFragment implements View.OnClickListe
 
     private PopupWindow setStokenWidthWindow;
     private SeekBar mStokenWidthSeekBar;
+    private TextView mSeekbarValue;
 
     private ImageView mEraserView;
 
     public boolean isEraser = false;//是否是擦除模式
 
     private SaveCustomPaintTask mSavePaintImageTask;
+    private FrameLayout frameLayout;
+    private LinearLayout paintRedoUodoPanel;
+    private FrameLayout redoIV;
+    private FrameLayout undoIV;
 
-    public int[] mPaintColors = {Color.BLACK,
-            Color.DKGRAY, Color.GRAY, Color.LTGRAY, Color.WHITE,
-            Color.RED, Color.GREEN, Color.BLUE, Color.YELLOW, Color.CYAN, Color.MAGENTA};
+
+    public int[] mPaintColors = {R.color.color_list_1,
+            R.color.color_list_2,R.color.color_list_3,R.color.color_list_4,R.color.color_list_5,
+            R.color.color_list_6,R.color.color_list_7,R.color.color_list_8,R.color.color_list_9,
+            R.color.color_list_10,R.color.color_list_11,R.color.color_list_12,R.color.color_list_13,
+            R.color.color_list_14,R.color.color_list_15};
 
     public static PaintFragment newInstance() {
         PaintFragment fragment = new PaintFragment();
@@ -79,13 +92,29 @@ public class PaintFragment extends BaseEditFragment implements View.OnClickListe
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+        paintRedoUodoPanel = activity.getPaintRedoUodoPanel();
+        redoIV = paintRedoUodoPanel.findViewById(R.id.paint_redo_btn);
+        undoIV = paintRedoUodoPanel.findViewById(R.id.paint_undo_btn);
         mPaintView = (CustomPaintView)getActivity().findViewById(R.id.custom_paint_view);
         backToMenu = mainView.findViewById(R.id.back_to_main);
         mPaintModeView = (PaintModeView) mainView.findViewById(R.id.paint_thumb);
         mColorListView = (RecyclerView) mainView.findViewById(R.id.paint_color_list);
         mEraserView = (ImageView) mainView.findViewById(R.id.paint_eraser);
 
+        mPaintView.redo(redoIV, new CustomPaintView.onRedoListener() {
+            @Override
+            public void onRedo(Bitmap bitmap) {
+
+            }
+        });
+        mPaintView.undo(undoIV, new CustomPaintView.onUndoListener() {
+            @Override
+            public void onUndo(Bitmap bitmap) {
+
+            }
+        });
         backToMenu.setOnClickListener(this);// 返回主菜单
+
 
         mColorPicker = new ColorPicker(getActivity(), 255, 0, 0);
         initColorListView();
@@ -108,7 +137,7 @@ public class PaintFragment extends BaseEditFragment implements View.OnClickListe
         stickerListLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
         mColorListView.setLayoutManager(stickerListLayoutManager);
 
-        mColorAdapter = new ColorListAdapter(this, mPaintColors, this);
+        mColorAdapter = new ColorListAdapter(getContext(), mPaintColors, this);
         mColorListView.setAdapter(mColorAdapter);
 
 
@@ -122,19 +151,22 @@ public class PaintFragment extends BaseEditFragment implements View.OnClickListe
             setStokeWidth();
         } else if (v == mEraserView) {
             toggleEraserView();
-        }//end if
+        }
+        //end if
     }
 
     /**
      * 返回主菜单
      */
     public void backToMain() {
+        setStokenWidthWindow.dismiss();
         activity.mode = EditImageActivity.MODE_NONE;
         activity.bottomGallery.setCurrentItem(MainMenuFragment.INDEX);
         activity.mainImage.setVisibility(View.VISIBLE);
         activity.bannerFlipper.showPrevious();
-
         this.mPaintView.setVisibility(View.GONE);
+        activity.setRedoUndoPanelVisibility(View.VISIBLE);
+        activity.setPaintRedoUndoPanelVisibility(View.GONE);
     }
 
     public void onShow() {
@@ -142,11 +174,14 @@ public class PaintFragment extends BaseEditFragment implements View.OnClickListe
         activity.mainImage.setImageBitmap(activity.getMainBit());
         activity.bannerFlipper.showNext();
         this.mPaintView.setVisibility(View.VISIBLE);
+        activity.setRedoUndoPanelVisibility(View.INVISIBLE);
+        activity.setPaintRedoUndoPanelVisibility(View.VISIBLE);
     }
 
     @Override
     public void onColorSelected(int position, int color) {
-        setPaintColor(color);
+        setPaintColor(getResources().getColor(color));
+        setStokeWidth();
     }
 
     @Override
@@ -169,7 +204,6 @@ public class PaintFragment extends BaseEditFragment implements View.OnClickListe
      */
     protected void setPaintColor(final int paintColor) {
         mPaintModeView.setPaintStrokeColor(paintColor);
-
         updatePaintView();
     }
 
@@ -199,6 +233,7 @@ public class PaintFragment extends BaseEditFragment implements View.OnClickListe
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 mPaintModeView.setPaintStrokeWidth(progress);
                 updatePaintView();
+                mSeekbarValue.setText(String.valueOf(progress));
             }
 
             @Override
@@ -225,15 +260,16 @@ public class PaintFragment extends BaseEditFragment implements View.OnClickListe
                 , ViewGroup.LayoutParams.WRAP_CONTENT);
 
         mStokenWidthSeekBar = (SeekBar) popView.findViewById(R.id.stoke_width_seekbar);
+        mSeekbarValue = popView.findViewById(R.id.seekbar_value);
 
-        setStokenWidthWindow.setFocusable(true);
-        setStokenWidthWindow.setOutsideTouchable(true);
+        setStokenWidthWindow.setFocusable(false);
+        setStokenWidthWindow.setOutsideTouchable(false);
         setStokenWidthWindow.setBackgroundDrawable(new BitmapDrawable());
         setStokenWidthWindow.setAnimationStyle(R.style.popwin_anim_style);
 
 
         mPaintModeView.setPaintStrokeColor(Color.RED);
-        mPaintModeView.setPaintStrokeWidth(10);
+        mPaintModeView.setPaintStrokeWidth(20);
 
         updatePaintView();
     }
@@ -244,7 +280,7 @@ public class PaintFragment extends BaseEditFragment implements View.OnClickListe
     }
 
     private void updateEraserView() {
-        mEraserView.setImageResource(isEraser ? R.drawable.eraser_seleced : R.drawable.eraser_normal);
+        mEraserView.setImageResource(isEraser ? R.drawable.ico_paint_eraser_selected : R.drawable.ico_paint_eraser);
         mPaintView.setEraser(isEraser);
     }
 

@@ -1,6 +1,30 @@
-<ImageView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/color_panel_view"
-    android:layout_margin="4dp"
-    android:layout_width="25dp"
-    android:layout_height="25dp"
-    />
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+
+    <ImageView
+        android:id="@+id/color_panel_view"
+        android:layout_margin="4dp"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        />
+
+    <ImageView
+        android:layout_margin="4dp"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:src="@drawable/ico_paint_color_background"
+        />
+
+    <ImageView
+        android:id="@+id/ico_selected"
+        android:layout_margin="4dp"
+        android:layout_width="14dp"
+        android:layout_height="14dp"
+        android:layout_gravity="center"
+        android:src="@drawable/ico_color_selected"
+        android:visibility="gone"
+        />
+
+</FrameLayout>

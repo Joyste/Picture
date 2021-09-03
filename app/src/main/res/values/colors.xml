@@ -8,9 +8,17 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="pink">#FFC5C5</color>
+    <color name="gray">#EEEEEEEE</color>
+    <color name="gray2">#DDDDDDDD</color>
+
+    <color name="theme_color">#FE375D</color>
 
     <color name="transparent">#00000000</color>
 
+    <color name="twenty_white">#33FFFFFF</color>
+
+    <color name="setting_background">#F7F7F7</color>
+    <color name="setting_line_background">#EEEEEE</color>
     <color name="app_color_grey">#393a3e</color>
     <color name="app_color_black">#000000</color>
     <color name="app_color_f6">#f6f6f6</color>
@@ -30,7 +38,7 @@
     <!--前景色-->
     <color name="easy_photos_fg_primary">#000000</color>//3e4145  前景主色，如字体颜色、icon颜色
     <color name="easy_photos_fg_primary_dark">#9b9b9b</color>//前景偏暗色，如不可用状态的字体颜色
-    <color name="easy_photos_fg_accent">#00AA00</color>//578fff  前景突出色，如发送按钮的背景色，选中状态的颜色
+    <color name="easy_photos_fg_accent">#FE375D</color>//578fff  前景突出色，如发送按钮的背景色，选中状态的颜色
 
     <!--背景色-->
     <color name="easy_photos_bg_primary">#FFFFFF</color>//f9f9f9  背景色，如每个activity的背景色，相册的图片间隔线颜色
@@ -41,7 +49,7 @@
     <color name="easy_photos_bar_primary_translation">#FFFFFF</color>//b4ffffff  操作栏带透明的色值，如预览页的底部操作栏颜色，相册页的相机按钮背景颜色。
 
     <!--状态栏-->
-    <color name="easy_photos_status_bar">#FFFFFF</color>//#ffffff
+    <color name="easy_photos_status_bar">#FFFFFF</color>
 
     <color name="encode_view">#ffffffff</color>
 
@@ -59,4 +67,22 @@
     <color name="filter_color_brown_dark">#e69138</color>
     <color name="filter_color_brown">#c8ca34</color>
     <color name="filter_color_brown_light">#ff9933</color>
+
+    <color name="color_list_1">#DDDDDD</color>
+    <color name="color_list_2">#CCCCCC</color>
+    <color name="color_list_3">#666666</color>
+    <color name="color_list_4">#000000</color>
+    <color name="color_list_5">#7A0400</color>
+    <color name="color_list_6">#CC0001</color>
+    <color name="color_list_7">#FF3737</color>
+    <color name="color_list_8">#FF7F00</color>
+    <color name="color_list_9">#ff9933</color>
+    <color name="color_list_10">#A3E401</color>
+    <color name="color_list_11">#7CAA0A</color>
+    <color name="color_list_12">#00BCD4</color>
+    <color name="color_list_13">#03A9F4</color>
+    <color name="color_list_14">#2196F3</color>
+    <color name="color_list_15">#3d5afe</color>
+
+
 </resources>

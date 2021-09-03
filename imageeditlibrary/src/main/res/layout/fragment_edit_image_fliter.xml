@@ -9,7 +9,8 @@
         android:layout_width="40dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
-        android:src="@drawable/image_edit_back" />
+        android:src="@drawable/image_edit_back"
+        android:visibility="gone"/>
 
     <HorizontalScrollView
         android:layout_width="fill_parent"
@@ -21,6 +22,8 @@
             android:layout_width="wrap_content"
             android:layout_height="fill_parent"
             android:orientation="horizontal" >
+
+
         </LinearLayout>
     </HorizontalScrollView>
 

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/rl_vp_btn"
+    >
+
+    <lifeexperience.tool.beautycamera.view.widget.AutoHeightImageView
+        android:id="@+id/iv_vp_source"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scaleType="fitXY"
+        android:adjustViewBounds="true"
+        android:src="@drawable/vp_source2"
+        />
+
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="31dp"
+        android:layout_alignBottom="@+id/iv_vp_source"
+        android:layout_marginBottom="36dp">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignEnd="@+id/tv_vp"
+            android:layout_alignBottom="@+id/tv_vp"
+            android:layout_marginEnd="5dp"
+            android:layout_marginBottom="@dimen/text26"
+            android:src="@drawable/vp_source2_rect" />
+
+        <TextView
+            android:id="@+id/tv_vp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="A variety\nof filters"
+            android:textColor="@color/white"
+            android:textSize="21sp"
+            android:textStyle="italic|bold" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/tv_vp"
+            android:layout_marginStart="0dp"
+            android:layout_marginBottom="6dp"
+            android:layout_toEndOf="@+id/tv_vp"
+            android:src="@drawable/ico_arrow_right" />
+
+    </RelativeLayout>
+
+</RelativeLayout>

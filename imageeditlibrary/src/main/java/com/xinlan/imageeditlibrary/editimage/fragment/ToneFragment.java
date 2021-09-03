@@ -1,6 +1,7 @@
 package com.xinlan.imageeditlibrary.editimage.fragment;
 
 import android.annotation.SuppressLint;
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
@@ -47,6 +48,7 @@ public class ToneFragment extends BaseEditFragment implements View.OnClickListen
     private ImageView ivToneIcon;
 
     private View currentItem;
+    private int currentPosition;
 
     private static final int MAX_VALUE = 255;
     private static final int MID_VALUE = 128;
@@ -55,6 +57,9 @@ public class ToneFragment extends BaseEditFragment implements View.OnClickListen
     private int mProgress = 0;
 
     private Bitmap editBitmap;
+    private int icoNormal[] = {R.drawable.ico_brightness_normal,R.drawable.ico_contrast_normal,R.drawable.ico_saturation_normal,R.drawable.ico_color_temp_normal,R.drawable.ico_exposure_normal};
+    private int icoSelected[] = {R.drawable.ico_brightness_selected,R.drawable.ico_contrast_selected,R.drawable.ico_saturation_selected,R.drawable.ico_color_temp_selected,R.drawable.ico_exposure_selected};
+
 
     public static ToneFragment newInstance() {
         ToneFragment fragment = new ToneFragment();
@@ -79,7 +84,7 @@ public class ToneFragment extends BaseEditFragment implements View.OnClickListen
 
         initData();
         initToneListView();
-        initStokeWidthPopWindow();
+        initSetToneValuePopWindow();
 
     }
 
@@ -87,11 +92,12 @@ public class ToneFragment extends BaseEditFragment implements View.OnClickListen
      * 初始化Item数据
      */
     private void initData() {
-        dataList.add(new appInfo(R.drawable.crop_normal, R.string.luminance, MID_VALUE));//亮度
-        dataList.add(new appInfo(R.drawable.crop_normal, R.string.contrast, MID_VALUE));//对比度
-        dataList.add(new appInfo(R.drawable.crop_normal, R.string.saturation, MID_VALUE));//饱和度
-        dataList.add(new appInfo(R.drawable.crop_normal, R.string.hue, MID_VALUE));//色相
-        dataList.add(new appInfo(R.drawable.crop_normal, R.string.exposure, MID_VALUE));//曝光
+        dataList.clear();
+        dataList.add(new appInfo(icoNormal[0], R.string.luminance, MID_VALUE));//亮度
+        dataList.add(new appInfo(icoNormal[1], R.string.contrast, MID_VALUE));//对比度
+        dataList.add(new appInfo(icoNormal[2], R.string.saturation, MID_VALUE));//饱和度
+        dataList.add(new appInfo(icoNormal[3], R.string.hue, MID_VALUE));//色温
+        dataList.add(new appInfo(icoNormal[4], R.string.exposure, MID_VALUE));//曝光
         mPhotoEnhance = new PhotoEnhance();
         mPhotoEnhance.setBitmap(editBitmap);
         mProgress = MID_VALUE;
@@ -100,12 +106,12 @@ public class ToneFragment extends BaseEditFragment implements View.OnClickListen
     /**
      * 初始化SeekBar
      */
-    private void initStokeWidthPopWindow() {
-        popView = LayoutInflater.from(activity).inflate(R.layout.view_set_stoke_width, null);
+    private void initSetToneValuePopWindow() {
+        popView = LayoutInflater.from(activity).inflate(R.layout.view_set_adjust_value, null);
         setToneValueWindow = new PopupWindow(popView, ViewGroup.LayoutParams.MATCH_PARENT
                 , ViewGroup.LayoutParams.WRAP_CONTENT);
 
-        mToneSeekBar = (SeekBar) popView.findViewById(R.id.stoke_width_seekbar);
+        mToneSeekBar = (SeekBar) popView.findViewById(R.id.tone_value_seekbar);
         seekbarValue = popView.findViewById(R.id.seekbar_value);
 
         setToneValueWindow.setFocusable(false);
@@ -133,8 +139,9 @@ public class ToneFragment extends BaseEditFragment implements View.OnClickListen
             public void onItemClick(View itemView, int position) {
                 POSITION = position;
                 setToneValue(itemView);
-                showOnClick(itemView);
+                showOnClick(itemView,position);
                 currentItem = itemView;
+                currentPosition = position;
             }
         });
         mToneListView.setAdapter(mToneListAdapter);
@@ -229,6 +236,25 @@ public class ToneFragment extends BaseEditFragment implements View.OnClickListen
      */
     @Override
     public void backToMain() {
+        if (editBitmap != activity.getMainBit()) {
+            showAlertDialog(getContext(), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    applyToneImage();
+                }
+            }, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                    back();
+                }
+            });
+        } else {
+            back();
+        }
+    }
+
+    private void back(){
         activity.mode = EditImageActivity.MODE_NONE;
         activity.bottomGallery.setCurrentItem(MainMenuFragment.INDEX);
         activity.mainImage.setImageBitmap(activity.getMainBit());// 返回原图
@@ -238,6 +264,7 @@ public class ToneFragment extends BaseEditFragment implements View.OnClickListen
 
         setToneValueWindow.dismiss();
         dataList.clear();
+        activity.setRedoUndoPanelVisibility(View.VISIBLE);
     }
 
 
@@ -246,6 +273,7 @@ public class ToneFragment extends BaseEditFragment implements View.OnClickListen
         activity.mode = EditImageActivity.MODE_TONE;
         activity.mainImage.setImageBitmap(activity.getMainBit());
         activity.bannerFlipper.showNext();
+        activity.setRedoUndoPanelVisibility(View.INVISIBLE);
     }
 
     /**
@@ -258,21 +286,29 @@ public class ToneFragment extends BaseEditFragment implements View.OnClickListen
         } else {
             activity.changeMainBitmap(activity.getMainBit(), true);
         }
-        backToMain();
+        back();
     }
 
-    private void showOnClick(View itemView) {
+    private void showOnClick(View itemView ,int position) {
         if (currentItem != itemView && currentItem != null) {
             tvToneName = currentItem.findViewById(R.id.tv_tone_name);
             tvToneValue = currentItem.findViewById(R.id.tv_tone_value);
-            tvToneName.setTextColor(getResources().getColor(R.color.white));
-            tvToneValue.setTextColor(getResources().getColor(R.color.white));
+            ivToneIcon = currentItem.findViewById(R.id.iv_tone_icon);
+            if (tvToneValue.getText().equals("0")) {
+                ivToneIcon.setImageResource(icoNormal[currentPosition]);
+                tvToneName.setTextColor(getResources().getColor(R.color.black));
+                tvToneValue.setTextColor(getResources().getColor(R.color.black));
+            }
+
         }
 
         tvToneName = itemView.findViewById(R.id.tv_tone_name);
         tvToneValue = itemView.findViewById(R.id.tv_tone_value);
-        tvToneName.setTextColor(getResources().getColor(R.color.materialcolorpicker__blue));
-        tvToneValue.setTextColor(getResources().getColor(R.color.materialcolorpicker__blue));
+        ivToneIcon = itemView.findViewById(R.id.iv_tone_icon);
+
+        ivToneIcon.setImageResource(icoSelected[position]);
+        tvToneName.setTextColor(getResources().getColor(R.color.theme_color));
+        tvToneValue.setTextColor(getResources().getColor(R.color.theme_color));
     }
 
 

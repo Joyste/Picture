@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.ViewFlipper;
 
 import com.xinlan.imageeditlibrary.BaseActivity;
@@ -89,8 +90,7 @@ public class StickerFragment extends BaseEditFragment {
 
         //
         backToMenu = mainView.findViewById(R.id.back_to_main);
-        typeList = (RecyclerView) mainView
-                .findViewById(R.id.stickers_type_list);
+        typeList = (RecyclerView) mainView.findViewById(R.id.stickers_type_list);
         typeList.setHasFixedSize(true);
         LinearLayoutManager mLayoutManager = new LinearLayoutManager(activity);
         mLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
@@ -114,6 +114,10 @@ public class StickerFragment extends BaseEditFragment {
                 flipper.showPrevious();
             }
         });
+
+        //仅有一排
+        swipToStickerDetails("stickers/type1");
+
     }
 
     @Override
@@ -122,6 +126,7 @@ public class StickerFragment extends BaseEditFragment {
         activity.mStickerFragment.getmStickerView().setVisibility(
                 View.VISIBLE);
         activity.bannerFlipper.showNext();
+        activity.setRedoUndoPanelVisibility(View.INVISIBLE);
     }
 
     //导入贴图数据
@@ -253,6 +258,7 @@ public class StickerFragment extends BaseEditFragment {
         activity.bottomGallery.setCurrentItem(0);
         mStickerView.setVisibility(View.GONE);
         activity.bannerFlipper.showPrevious();
+        activity.setRedoUndoPanelVisibility(View.VISIBLE);
     }
 
     /**

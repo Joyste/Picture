@@ -4,16 +4,15 @@
     android:orientation="vertical"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_marginHorizontal="10dp"
-    android:layout_marginTop="5dp"
+    android:layout_marginHorizontal="25dp"
     >
 
     <ImageView
         android:id="@+id/iv_tone_icon"
-        android:layout_width="25dp"
-        android:layout_height="25dp"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
         android:layout_gravity="center_horizontal"
-        android:background="@drawable/image_edit_icon_crop"/>
+        />
 
     <TextView
         android:id="@+id/tv_tone_name"
@@ -21,7 +20,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
         android:layout_gravity="center_horizontal"
-        android:textColor="@color/white"
+        android:textColor="@color/black"
         android:textSize="@dimen/text_10sp"
         />
 
@@ -30,8 +29,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:textColor="@color/white"
+        android:textColor="@color/black"
         android:textSize="@dimen/text_10sp"
+        android:visibility="gone"
         />
 
 

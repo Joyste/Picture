@@ -1,60 +1,73 @@
 <resources>
     <string name="app_name">ImageEditLibrary</string>
-    <string name="no_images">no found the image</string>
+    <string name="no_images">No found the image</string>
     <string name="images">%d images</string>
-    <string name="save">save</string>
-    <string name="apply">apply</string>
+    <string name="save">Save</string>
+    <string name="apply">Apply</string>
 
-    <string name="stickers">stickers</string>
-    <string name="filter">filter</string>
-    <string name="crop">crop</string>
-    <string name="rotate">rotate</string>
-    <string name="text">text</string>
-    <string name="edit">edit</string>
-    <string name="tone">tone</string>
-    <string name="reset">reset</string>
-    <string name="luminance">luminance</string>
-    <string name="contrast">contrast</string>
-    <string name="saturation">saturation</string>
-    <string name="hue">hue</string>
-    <string name="exposure">exposure</string>
+    <string name="stickers">Sticker</string>
+    <string name="filter">Filter</string>
+    <string name="crop">Tools</string>
+    <string name="rotate">Rotate</string>
+    <string name="text">Text</string>
+    <string name="edit">Graffiti</string>
+    <string name="tone">Adjust</string>
+    <string name="reset">Reset</string>
+    <string name="luminance">Brightness</string>
+    <string name="contrast">Contrast</string>
+    <string name="saturation">Saturation</string>
+    <string name="hue">Color temp</string>
+    <string name="exposure">Exposure</string>
 
     <string name="materialcolorpicker__app_name">Android Material Color Picker Dialog</string>
     <string name="materialcolorpicker__descLib">Material Color Picker Dialog</string>
     <string name="materialcolorpicker__errHex">Hex Code Format incorrect</string>
     <string name="materialcolorpicker__inputColor">Color:</string>
     <string name="materialcolorpicker__btnSelectColor">Select</string>
-    <string name="saving_image">save...</string>
-    <string name="input_hint">input text ...</string>
+    <string name="saving_image">Save...</string>
+    <string name="input_hint">Please enter the text</string>
 
-    <string name="no_choose">please choose a image for edit</string>
+    <string name="no_choose">Please choose a image for edit</string>
     <string name="auto_newline">AutoNewline</string>
     <string name="save_error">Save error!</string>
-    <string name="handing">loading...</string>
+    <string name="handing">Loading...</string>
 
     <string-array name="filters">
-        <item>origin</item>
-        <item>soft</item>
-        <item>black</item>
-        <item>classic</item>
-        <item>gorgeous</item>
-        <item>retro</item>
-        <item>grace</item>
-        <item>film</item>
-        <item>memory</item>
-        <item>yogurt</item>
-        <item>fleeting</item>
-        <item>shine</item>
-        <item>mosaic</item>
+        <item>Origin</item>
+        <item>Soft</item>
+        <item>Black</item>
+        <item>Classic</item>
+        <item>Gorgeous</item>
+        <item>Retro</item>
+        <item>Grace</item>
+        <item>Film</item>
+        <item>Memory</item>
+        <item>Yogurt</item>
+        <item>Fleeting</item>
+        <item>Shine</item>
+        <item>Mosaic</item>
     </string-array>
 
-    <string name="more">more</string>
-    <string name="exit_without_save">The edited image is not saved. Do you want to exit? </string>
-    <string name="confirm">confirm</string>
-    <string name="cancel">cancel</string>
+    <string name="more">More</string>
+    <string name="exit_without_save">The edited image is not saved. Do you want to save? </string>
+    <string name="exit_without_apply">The edited image is not applied. Do you want to apply? </string>
+    <string name="confirm">Confirm</string>
+    <string name="cancel">Cancel</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="custom">Custom</string>
+    <string name="original">Original</string>
 
-    <string name="beauty">beauty</string>
-    <string name="smooth">smooth</string>
-    <string name="white_skin">white skin</string>
-    <string name="hint_seekbar_value">128</string>
+    <string name="up">Move up</string>
+    <string name="down">Move down</string>
+    <string name="up_fail_toast">The current image is already at the top level and cannot be moved up</string>
+    <string name="down_fail_toast">The current image is already the lowest level and cannot be moved down</string>
+
+
+    <string name="beauty">Beauty</string>
+    <string name="smooth">Smooth</string>
+    <string name="white_skin">Beauty</string>
+    <string name="hint_seekbar_value">20</string>
+    <string name="rotate_seekbar_value">0°</string>
+    <string name="add_text_hint">Please enter the text</string>
 </resources>

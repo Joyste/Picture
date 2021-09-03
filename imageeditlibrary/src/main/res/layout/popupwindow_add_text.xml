@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ll_pop"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/popwindow_background">
+
+
+    <RelativeLayout
+        android:id="@+id/rl"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="15dp"
+        >
+
+        <ImageView
+            android:id="@+id/iv_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ico_cancel"/>
+
+        <ImageView
+            android:id="@+id/iv_confirm"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ico_save"
+            android:layout_alignParentEnd="true"/>
+    </RelativeLayout>
+
+
+
+    <EditText
+        android:id="@+id/add_text_edittext"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/rl"
+        android:layout_above="@+id/fl"
+        android:textSize="21sp"
+        android:hint="@string/add_text_hint"
+        android:textColor="@color/red"
+        android:textColorHint="@color/materialcolorpicker__grey"
+        android:gravity="center"
+        android:background="@color/transparent"
+        android:inputType="textMultiLine"
+        android:maxLength="100"
+        />
+
+
+
+    <RelativeLayout
+        android:id="@+id/fl"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@color/color_list_background"
+        >
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/text_color_list"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:layout_centerHorizontal="true"
+            android:overScrollMode="never"
+            android:scrollbars="none"/>
+    </RelativeLayout>
+
+
+</RelativeLayout>
